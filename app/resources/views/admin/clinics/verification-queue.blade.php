@@ -2,6 +2,7 @@
     $nav = [
         ['route' => 'admin.dashboard', 'label' => 'Overview', 'icon' => '🏠'],
         ['route' => 'admin.clinics.verification.index', 'label' => 'Clinic Verification', 'icon' => '✅'],
+        ['route' => 'admin.products.moderation.index', 'label' => 'Product Moderation', 'icon' => '🛒'],
     ];
 @endphp
 <x-layouts.dashboard title="Clinic Verification Queue" :nav="$nav" brand="Dental Connect Admin">

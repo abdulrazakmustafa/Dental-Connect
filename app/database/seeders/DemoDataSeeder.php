@@ -8,6 +8,8 @@ use App\Modules\Clinic\Models\Clinic;
 use App\Modules\Clinic\Models\ClinicLocation;
 use App\Modules\Clinic\Models\Dentist;
 use App\Modules\Clinic\Models\Service;
+use App\Modules\Marketplace\Models\Product;
+use App\Modules\Marketplace\Models\ProductCategory;
 use App\Modules\Patient\Models\ClinicPatient;
 use App\Modules\Supplier\Models\Supplier;
 use Illuminate\Database\Seeder;
@@ -87,7 +89,7 @@ class DemoDataSeeder extends Seeder
         );
         $supplierOwner->syncRoles(['supplier_owner']);
 
-        Supplier::firstOrCreate(
+        $supplier = Supplier::firstOrCreate(
             ['slug' => 'dental-supplies-tz'],
             [
                 'name' => 'Dental Supplies TZ',
@@ -101,6 +103,31 @@ class DemoDataSeeder extends Seeder
                 'city' => 'Dar es Salaam',
             ]
         );
+
+        $demoProducts = [
+            ['name' => 'Nitrile Examination Gloves (Box of 100)', 'category' => 'Gloves & PPE', 'price' => 18000, 'unit' => 'box'],
+            ['name' => 'Lidocaine 2% Local Anesthetic (Box of 50)', 'category' => 'Anesthetics', 'price' => 95000, 'unit' => 'box'],
+            ['name' => 'Alginate Impression Material 1kg', 'category' => 'Impression Materials', 'price' => 32000, 'unit' => 'unit'],
+            ['name' => 'High-Speed Dental Handpiece', 'category' => 'Handpieces', 'price' => 450000, 'unit' => null],
+        ];
+
+        foreach ($demoProducts as $item) {
+            $category = ProductCategory::where('name', $item['category'])->first();
+
+            Product::firstOrCreate(
+                ['supplier_id' => $supplier->id, 'slug' => Str::slug($item['name'])],
+                [
+                    'category_id' => $category?->id,
+                    'name' => $item['name'],
+                    'price' => $item['price'],
+                    'price_unit' => $item['unit'],
+                    'price_visible' => true,
+                    'status' => 'active',
+                    'moderation_status' => 'approved',
+                    'is_available' => true,
+                ]
+            );
+        }
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@dentalconnect.co.tz'],

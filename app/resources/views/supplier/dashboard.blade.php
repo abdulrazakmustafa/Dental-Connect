@@ -1,6 +1,8 @@
 @php
     $nav = [
         ['route' => 'supplier.dashboard', 'label' => 'Dashboard', 'icon' => '🏠'],
+        ['route' => 'supplier.products.index', 'label' => 'Products', 'icon' => '📦'],
+        ['route' => 'supplier.rfqs.index', 'label' => 'RFQs', 'icon' => '✉️'],
         ['route' => 'marketplace.home', 'label' => 'Marketplace', 'icon' => '🛒'],
         ['route' => 'supplier.onboarding', 'label' => 'Profile & Verification', 'icon' => '⚙️'],
     ];

@@ -1,0 +1,35 @@
+@php
+    $nav = [
+        ['route' => 'supplier.dashboard', 'label' => 'Dashboard', 'icon' => '🏠'],
+        ['route' => 'supplier.products.index', 'label' => 'Products', 'icon' => '📦'],
+        ['route' => 'supplier.rfqs.index', 'label' => 'RFQs', 'icon' => '✉️'],
+        ['route' => 'marketplace.home', 'label' => 'Marketplace', 'icon' => '🛒'],
+    ];
+@endphp
+<x-layouts.dashboard title="RFQ Inbox" :nav="$nav">
+    <div class="dc-card overflow-hidden">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-dc-mint-light text-xs uppercase text-dc-text-secondary">
+                <tr>
+                    <th class="px-4 py-3">Clinic</th>
+                    <th class="px-4 py-3">Product</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3">Received</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-dc-border">
+                @forelse ($rfqs as $rfq)
+                    <tr>
+                        <td class="px-4 py-3"><a href="{{ route('marketplace.rfqs.show', $rfq) }}" class="font-medium text-dc-teal-dark">{{ $rfq->clinic->name }}</a></td>
+                        <td class="px-4 py-3">{{ $rfq->product?->name ?? '—' }}</td>
+                        <td class="px-4 py-3"><span class="dc-badge bg-dc-mint text-dc-teal-dark">{{ ucfirst($rfq->status) }}</span></td>
+                        <td class="px-4 py-3">{{ $rfq->created_at->format('j M Y') }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="px-4 py-8 text-center text-dc-text-secondary">No quotation requests yet.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-4">{{ $rfqs->links() }}</div>
+</x-layouts.dashboard>

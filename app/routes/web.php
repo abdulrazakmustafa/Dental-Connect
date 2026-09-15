@@ -2,6 +2,7 @@
 
 use App\Modules\AdminAnalytics\Http\Controllers\AdminDashboardController;
 use App\Modules\AdminAnalytics\Http\Controllers\ClinicVerificationController;
+use App\Modules\AdminAnalytics\Http\Controllers\ProductModerationController;
 use App\Modules\Appointment\Http\Controllers\AppointmentController;
 use App\Modules\Clinic\Http\Controllers\ClinicDashboardController;
 use App\Modules\Clinic\Http\Controllers\ClinicDirectoryController;
@@ -12,10 +13,13 @@ use App\Modules\Identity\Http\Controllers\Auth\LoginController;
 use App\Modules\Identity\Http\Controllers\Auth\PasswordResetController;
 use App\Modules\Identity\Http\Controllers\Auth\RegisterController;
 use App\Modules\Identity\Http\Controllers\Public\PublicPageController;
+use App\Modules\Marketplace\Http\Controllers\MarketplaceController;
+use App\Modules\Marketplace\Http\Controllers\RfqController;
 use App\Modules\Patient\Http\Controllers\ClinicEnrollmentController;
 use App\Modules\Patient\Http\Controllers\PatientDashboardController;
 use App\Modules\Supplier\Http\Controllers\SupplierDashboardController;
 use App\Modules\Supplier\Http\Controllers\SupplierOnboardingController;
+use App\Modules\Supplier\Http\Controllers\SupplierProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,6 +95,7 @@ Route::prefix('clinic')->as('clinic.')->middleware(['auth', 'role:clinic_owner|c
     Route::get('/patients/{clinicPatient}', [ClinicPatientController::class, 'show'])->name('patients.show');
     Route::get('/appointments', [AppointmentController::class, 'clinicIndex'])->name('appointments.index');
     Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.status');
+    Route::get('/rfqs', [RfqController::class, 'clinicIndex'])->name('rfqs.index');
 });
 
 /*
@@ -102,6 +107,13 @@ Route::prefix('supplier')->as('supplier.')->middleware(['auth', 'role:supplier_o
     Route::get('/onboarding', [SupplierOnboardingController::class, 'create'])->name('onboarding');
     Route::post('/onboarding', [SupplierOnboardingController::class, 'store'])->name('onboarding.store');
     Route::get('/dashboard', [SupplierDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/products', [SupplierProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [SupplierProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [SupplierProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{product}/edit', [SupplierProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{product}', [SupplierProductController::class, 'update'])->name('products.update');
+    Route::patch('/products/{product}/availability', [SupplierProductController::class, 'toggleAvailability'])->name('products.availability');
+    Route::get('/rfqs', [RfqController::class, 'supplierIndex'])->name('rfqs.index');
 });
 
 /*
@@ -111,9 +123,13 @@ Route::prefix('supplier')->as('supplier.')->middleware(['auth', 'role:supplier_o
 |--------------------------------------------------------------------------
 */
 Route::prefix('marketplace')->as('marketplace.')->middleware(['auth', 'marketplace.access'])->group(function () {
-    Route::get('/', function () {
-        return view('marketplace.home');
-    })->name('home');
+    Route::get('/', [MarketplaceController::class, 'index'])->name('home');
+    Route::get('/products/{product}', [MarketplaceController::class, 'show'])->name('products.show');
+    Route::post('/products/{product}/rfqs', [RfqController::class, 'store'])
+        ->middleware(['role:clinic_owner|clinic_admin|clinic_staff', 'throttle:10,1'])
+        ->name('rfqs.store');
+    Route::get('/rfqs/{rfq}', [RfqController::class, 'show'])->name('rfqs.show');
+    Route::post('/rfqs/{rfq}/respond', [RfqController::class, 'respond'])->name('rfqs.respond');
 });
 
 /*
@@ -127,4 +143,8 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', 'role:admin|super_admi
     Route::patch('/clinics/{clinic}/verification', [ClinicVerificationController::class, 'update'])
         ->middleware('permission:clinic.verify')
         ->name('clinics.verification.update');
+    Route::get('/products/moderation', [ProductModerationController::class, 'index'])->name('products.moderation.index');
+    Route::patch('/products/{product}/moderation', [ProductModerationController::class, 'update'])
+        ->middleware('permission:products.moderate')
+        ->name('products.moderation.update');
 });

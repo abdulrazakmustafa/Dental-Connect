@@ -4,13 +4,18 @@ namespace App\Modules\Marketplace\Models;
 
 use App\Models\User;
 use App\Modules\Clinic\Models\Clinic;
+use App\Modules\Marketplace\Policies\RfqPolicy;
 use App\Modules\Shared\Concerns\HasPublicUlid;
 use App\Modules\Supplier\Models\Supplier;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[UsePolicy(RfqPolicy::class)]
+#[UseFactory(\Database\Factories\RfqFactory::class)]
 class Rfq extends Model
 {
     use HasFactory, HasPublicUlid;
