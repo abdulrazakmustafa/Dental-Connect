@@ -21,12 +21,19 @@ class PasswordResetController extends Controller
 
     public function sendResetLink(Request $request): RedirectResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
+        $request->validate(['email' => ['required', 'string']]);
 
-        Password::sendResetLink($request->only('email'));
+        $identifier = trim($request->string('email'));
 
-        // Always respond the same way regardless of whether the email exists.
-        return back()->with('status', 'If that email address is registered, a reset link has been sent.');
+        // Phone-based recovery requires an SMS/WhatsApp channel not yet built
+        // (see Notification module TODOs) — only email-shaped input can
+        // actually be processed today. The response is identical either way
+        // so this endpoint never discloses which accounts exist.
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            Password::sendResetLink(['email' => $identifier]);
+        }
+
+        return back()->with('status', "If that account exists, we've sent recovery instructions to it.");
     }
 
     public function resetForm(Request $request, string $token): View

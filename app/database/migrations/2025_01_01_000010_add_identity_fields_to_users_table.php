@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->ulid('public_id')->after('id')->unique();
-            $table->string('phone', 20)->nullable()->after('email');
+            $table->string('phone', 20)->nullable()->unique()->after('email');
             $table->timestamp('phone_verified_at')->nullable()->after('phone');
             $table->string('status', 20)->default('active')->after('password');
             $table->timestamp('suspended_at')->nullable()->after('status');

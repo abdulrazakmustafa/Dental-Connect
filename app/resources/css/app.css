@@ -7,7 +7,7 @@
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* Dental Connect brand palette — see ARCHITECTURE.md / PRD §4 visual direction */
+    /* Dental Connect brand palette — matched to the approved mockups */
     --color-dc-teal: #14B8A6;
     --color-dc-teal-deep: #0F766E;
     --color-dc-teal-dark: #115E59;
@@ -22,9 +22,27 @@
     --color-dc-border: #DDEEEA;
 
     --color-dc-success: #22C55E;
-    --color-dc-warning: #F59E0B;
-    --color-dc-danger: #EF4444;
-    --color-dc-info: #3B82F6;
+    --color-dc-success-bg: #DCFCE7;
+    --color-dc-warning: #D97706;
+    --color-dc-warning-bg: #FEF3C7;
+    --color-dc-danger: #DC2626;
+    --color-dc-danger-bg: #FEE2E2;
+    --color-dc-info: #2563EB;
+    --color-dc-info-bg: #DBEAFE;
+}
+
+@layer base {
+    /* The mockups use a persistent soft mint→white gradient behind every
+       screen, not a flat background — this is the single biggest visual
+       signature of the approved design. */
+    body {
+        background: linear-gradient(180deg, var(--color-dc-aqua) 0%, var(--color-dc-mint-light) 45%, #FFFFFF 100%);
+        background-attachment: fixed;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
 }
 
 @layer components {
@@ -36,25 +54,64 @@
         @apply bg-white border border-dc-border rounded-2xl shadow-sm;
     }
 
+    /* Primary CTA — full pill shape per mockups (Log in, Continue, Submit...) */
     .dc-btn-primary {
-        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-dc-teal px-5 py-2.5
-            text-sm font-semibold text-white shadow-sm transition hover:bg-dc-teal-deep
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-dc-teal to-dc-teal-deep px-6 py-3.5
+            text-sm font-bold text-white shadow-sm transition hover:brightness-105
             focus:outline-none focus:ring-2 focus:ring-dc-teal focus:ring-offset-2 disabled:opacity-50;
     }
 
     .dc-btn-secondary {
-        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-dc-border
-            bg-white px-5 py-2.5 text-sm font-semibold text-dc-text shadow-sm transition
+        @apply inline-flex items-center justify-center gap-2 rounded-full border border-dc-border
+            bg-white px-6 py-3.5 text-sm font-bold text-dc-text shadow-sm transition
             hover:bg-dc-mint-light focus:outline-none focus:ring-2 focus:ring-dc-teal;
     }
 
+    /* White pill button used on top of teal gradient hero cards */
+    .dc-btn-white {
+        @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5
+            text-sm font-bold text-dc-teal-deep shadow-sm transition hover:bg-dc-mint-light
+            focus:outline-none focus:ring-2 focus:ring-white;
+    }
+
     .dc-input {
-        @apply block w-full rounded-xl border border-dc-border bg-white px-4 py-2.5 text-sm
+        @apply block w-full rounded-2xl border border-dc-border bg-white px-4 py-3 text-sm
+            text-dc-text placeholder:text-dc-text-secondary focus:outline-none
+            focus:ring-2 focus:ring-dc-teal focus:border-transparent;
+    }
+
+    .dc-input-pill {
+        @apply block w-full rounded-full border border-dc-border bg-white px-5 py-3 text-sm
             text-dc-text placeholder:text-dc-text-secondary focus:outline-none
             focus:ring-2 focus:ring-dc-teal focus:border-transparent;
     }
 
     .dc-badge {
-        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold;
+    }
+
+    /* Teal gradient hero panel — appointment/dashboard/clinic-profile heroes */
+    .dc-hero {
+        @apply relative overflow-hidden rounded-3xl bg-gradient-to-br from-dc-teal to-dc-teal-deep p-6 text-white shadow-sm;
+    }
+
+    .dc-avatar {
+        @apply flex items-center justify-center rounded-full bg-dc-mint font-bold text-dc-teal-deep;
+    }
+
+    .dc-avatar-square {
+        @apply flex items-center justify-center rounded-2xl bg-dc-mint font-bold text-dc-teal-deep;
+    }
+
+    .dc-pill-tab {
+        @apply inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold transition;
+    }
+
+    .dc-pill-tab-active {
+        @apply bg-dc-mint text-dc-teal-deep;
+    }
+
+    .dc-pill-tab-inactive {
+        @apply bg-white text-dc-text-secondary border border-dc-border;
     }
 }

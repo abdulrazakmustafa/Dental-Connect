@@ -21,8 +21,8 @@ class RegisterUserAction
         return DB::transaction(function () use ($data) {
             $user = User::create([
                 'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'] ?? null,
+                'email' => $data['email'] ?? null,
+                'phone' => $data['phone'],
                 'password' => Hash::make($data['password']),
             ]);
 
@@ -43,8 +43,8 @@ class RegisterUserAction
         Clinic::create([
             'name' => $data['organization_name'],
             'slug' => Str::slug($data['organization_name']).'-'.Str::lower(Str::random(5)),
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'],
             'owner_user_id' => $user->id,
             'verification_status' => Clinic::STATUS_DRAFT,
             'is_active' => false,
@@ -58,8 +58,8 @@ class RegisterUserAction
         Supplier::create([
             'name' => $data['organization_name'],
             'slug' => Str::slug($data['organization_name']).'-'.Str::lower(Str::random(5)),
-            'email' => $data['email'],
-            'phone' => $data['phone'] ?? null,
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'],
             'owner_user_id' => $user->id,
             'verification_status' => 'draft',
             'is_active' => false,

@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -19,18 +20,22 @@ class LoginController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
+        $request->validate([
+            'login' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        $throttleKey = strtolower($credentials['email']).'|'.$request->ip();
+        $identifier = trim($request->string('login'));
+        $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $credentials = [$field => $identifier, 'password' => $request->string('password')];
+
+        $throttleKey = Str::lower($identifier).'|'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
 
             throw ValidationException::withMessages([
-                'email' => "Too many login attempts. Try again in {$seconds} seconds.",
+                'login' => "Too many login attempts. Try again in {$seconds} seconds.",
             ]);
         }
 
@@ -38,7 +43,7 @@ class LoginController extends Controller
             RateLimiter::hit($throttleKey, 60);
 
             throw ValidationException::withMessages([
-                'email' => 'These credentials do not match our records.',
+                'login' => 'These credentials do not match our records.',
             ]);
         }
 
@@ -50,7 +55,7 @@ class LoginController extends Controller
             Auth::logout();
 
             throw ValidationException::withMessages([
-                'email' => 'This account is suspended. Contact Dental Connect support.',
+                'login' => 'This account is suspended. Contact Dental Connect support.',
             ]);
         }
 

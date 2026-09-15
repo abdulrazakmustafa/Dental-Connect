@@ -90,4 +90,12 @@ class Appointment extends Model
     {
         return in_array($status, self::TRANSITIONS[$this->status] ?? [], true);
     }
+
+    /** "10:30:00" -> "10:30 AM", for display only — the raw DB value stays HH:MM:SS. */
+    public function formattedTime(): ?string
+    {
+        return $this->preferred_time
+            ? \Carbon\Carbon::createFromFormat('H:i:s', $this->preferred_time)->format('g:i A')
+            : null;
+    }
 }

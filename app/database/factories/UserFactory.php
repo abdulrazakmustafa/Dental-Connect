@@ -28,7 +28,7 @@ class UserFactory extends Factory
             'public_id' => (string) Str::ulid(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->numerify('+2557########'),
+            'phone' => fake()->unique()->numerify('+2557########'),
             'email_verified_at' => now(),
             'status' => 'active',
             'password' => static::$password ??= Hash::make('password'),

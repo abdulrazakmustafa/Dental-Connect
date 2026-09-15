@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\AdminAnalytics\Models\VerificationSubmission;
 use App\Modules\Clinic\Policies\ClinicPolicy;
 use App\Modules\Patient\Models\ClinicPatient;
+use App\Modules\TrustSupport\Models\Review;
 use App\Modules\Shared\Concerns\HasPublicUlid;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -72,7 +73,7 @@ class Clinic extends Model
 
     public function services(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class, 'clinic_services');
+        return $this->belongsToMany(Service::class, 'clinic_services')->withPivot('price');
     }
 
     public function specialties(): BelongsToMany
@@ -88,6 +89,11 @@ class Clinic extends Model
     public function verificationSubmissions(): MorphMany
     {
         return $this->morphMany(VerificationSubmission::class, 'verifiable', 'verifiable_type', 'verifiable_id');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 
     public function isVerified(): bool

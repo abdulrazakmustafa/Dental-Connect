@@ -31,7 +31,7 @@ class RegisterController extends Controller
         return match ($request->validated('role')) {
             'clinic' => redirect()->route('clinic.onboarding'),
             'supplier' => redirect()->route('supplier.onboarding'),
-            default => redirect()->route('patient.dashboard'),
+            default => redirect()->route('clinics.index'), // "Continue to Clinic Selection"
         };
     }
 }

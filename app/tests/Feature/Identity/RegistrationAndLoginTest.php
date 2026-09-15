@@ -22,13 +22,14 @@ class RegistrationAndLoginTest extends TestCase
         $response = $this->post(route('register.store'), [
             'role' => 'patient',
             'name' => 'Grace Mwakasege',
-            'email' => 'grace@example.com',
+            'phone' => '+255712345678',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
+            'terms' => '1',
         ]);
 
-        $response->assertRedirect(route('patient.dashboard'));
-        $this->assertTrue(User::whereEmail('grace@example.com')->first()->hasRole('patient'));
+        $response->assertRedirect(route('clinics.index'));
+        $this->assertTrue(User::where('phone', '+255712345678')->first()->hasRole('patient'));
     }
 
     public function test_clinic_registration_creates_draft_clinic_and_redirects_to_onboarding(): void
@@ -37,9 +38,11 @@ class RegistrationAndLoginTest extends TestCase
             'role' => 'clinic',
             'name' => 'Amina Suleiman',
             'organization_name' => 'Smile Dental Clinic',
+            'phone' => '+255700000099',
             'email' => 'amina@smiledental.example',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
+            'terms' => '1',
         ]);
 
         $response->assertRedirect(route('clinic.onboarding'));
@@ -51,7 +54,7 @@ class RegistrationAndLoginTest extends TestCase
         $user = User::factory()->create(['password' => bcrypt('Password123!')]);
         $user->assignRole('patient');
 
-        $this->post(route('login.store'), ['email' => $user->email, 'password' => 'Password123!'])
+        $this->post(route('login.store'), ['login' => $user->email, 'password' => 'Password123!'])
             ->assertRedirect(route('patient.dashboard'));
 
         $this->actingAs($user)->post(route('logout'))->assertRedirect(route('home'));
@@ -62,8 +65,8 @@ class RegistrationAndLoginTest extends TestCase
     {
         $user = User::factory()->create(['password' => bcrypt('Password123!')]);
 
-        $this->post(route('login.store'), ['email' => $user->email, 'password' => 'wrong'])
-            ->assertSessionHasErrors('email');
+        $this->post(route('login.store'), ['login' => $user->email, 'password' => 'wrong'])
+            ->assertSessionHasErrors('login');
         $this->assertGuest();
     }
 
@@ -71,8 +74,8 @@ class RegistrationAndLoginTest extends TestCase
     {
         $user = User::factory()->create(['password' => bcrypt('Password123!'), 'status' => 'suspended']);
 
-        $this->post(route('login.store'), ['email' => $user->email, 'password' => 'Password123!'])
-            ->assertSessionHasErrors('email');
+        $this->post(route('login.store'), ['login' => $user->email, 'password' => 'Password123!'])
+            ->assertSessionHasErrors('login');
         $this->assertGuest();
     }
 }

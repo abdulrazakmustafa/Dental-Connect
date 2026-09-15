@@ -4,6 +4,7 @@ namespace App\Modules\Patient\Actions;
 
 use App\Models\User;
 use App\Modules\Clinic\Models\Clinic;
+use App\Modules\Notification\Services\NotificationService;
 use App\Modules\Patient\Models\ClinicPatient;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -15,9 +16,11 @@ use Illuminate\Validation\ValidationException;
  */
 class EnrollPatientWithClinicAction
 {
+    public function __construct(private readonly NotificationService $notifications) {}
+
     public function execute(User $user, Clinic $clinic, array $data): ClinicPatient
     {
-        return DB::transaction(function () use ($user, $clinic, $data) {
+        $clinicPatient = DB::transaction(function () use ($user, $clinic, $data) {
             $existing = ClinicPatient::where('clinic_id', $clinic->id)
                 ->where('user_id', $user->id)
                 ->first();
@@ -39,6 +42,18 @@ class EnrollPatientWithClinicAction
                 'status' => 'active',
             ]);
         });
+
+        if ($clinicPatient->wasRecentlyCreated) {
+            $this->notifications->notify(
+                $user,
+                'enrollment.active',
+                'Dental Connect',
+                'Your clinic enrollment is active.',
+                $clinicPatient,
+            );
+        }
+
+        return $clinicPatient;
     }
 
     private function nextPatientNumber(Clinic $clinic): string

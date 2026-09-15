@@ -8,10 +8,13 @@ use App\Modules\Clinic\Models\Clinic;
 use App\Modules\Clinic\Models\ClinicLocation;
 use App\Modules\Clinic\Models\Dentist;
 use App\Modules\Clinic\Models\Service;
+use App\Modules\Clinic\Models\Specialty;
 use App\Modules\Marketplace\Models\Product;
 use App\Modules\Marketplace\Models\ProductCategory;
+use App\Modules\Notification\Models\PatientNotification;
 use App\Modules\Patient\Models\ClinicPatient;
 use App\Modules\Supplier\Models\Supplier;
+use App\Modules\TrustSupport\Models\Review;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -52,16 +55,34 @@ class DemoDataSeeder extends Seeder
             ['address_line' => 'Samora Avenue', 'region' => 'Dar es Salaam', 'city' => 'Dar es Salaam', 'area' => 'Kariakoo']
         );
 
-        $clinic->services()->syncWithoutDetaching(Service::inRandomOrder()->limit(4)->pluck('id'));
+        $servicePrices = [
+            'General Checkup' => 50000,
+            'Teeth Cleaning' => 80000,
+            'Tooth Extraction' => 60000,
+            'Dental Filling' => 70000,
+        ];
+
+        foreach ($servicePrices as $name => $price) {
+            $service = Service::where('name', $name)->first();
+            if ($service) {
+                $clinic->services()->syncWithoutDetaching([$service->id => ['price' => $price]]);
+            }
+        }
+
+        $clinic->specialties()->syncWithoutDetaching(Specialty::whereIn('name', ['General Dentistry', 'Cosmetic Dentistry', 'Orthodontics'])->pluck('id'));
 
         $dentist = Dentist::firstOrCreate(
-            ['clinic_id' => $clinic->id, 'full_name' => 'Dr. John Mushi'],
+            ['clinic_id' => $clinic->id, 'full_name' => 'Dr. Sarah Johnson'],
             ['status' => 'active', 'bio' => 'General dentist with 10 years of experience.']
         );
+        $generalSpecialty = Specialty::where('name', 'General Dentistry')->first();
+        if ($generalSpecialty) {
+            $dentist->specialties()->syncWithoutDetaching([$generalSpecialty->id]);
+        }
 
         $patientUser = User::firstOrCreate(
             ['email' => 'patient@example.com'],
-            ['public_id' => (string) Str::ulid(), 'name' => 'Grace Mwakasege', 'password' => Hash::make('password'), 'status' => 'active', 'email_verified_at' => now()]
+            ['public_id' => (string) Str::ulid(), 'name' => 'Aisha Hassan', 'phone' => '+255712345678', 'password' => Hash::make('password'), 'status' => 'active', 'email_verified_at' => now()]
         );
         $patientUser->syncRoles(['patient']);
 
@@ -69,8 +90,8 @@ class DemoDataSeeder extends Seeder
             ['clinic_id' => $clinic->id, 'user_id' => $patientUser->id],
             [
                 'patient_number' => 'SDC-000001',
-                'first_name' => 'Grace',
-                'last_name' => 'Mwakasege',
+                'first_name' => 'Aisha',
+                'last_name' => 'Hassan',
                 'phone' => $patientUser->phone,
                 'email' => $patientUser->email,
                 'assigned_dentist_id' => $dentist->id,
@@ -78,9 +99,49 @@ class DemoDataSeeder extends Seeder
             ]
         );
 
+        $checkupService = Service::where('name', 'General Checkup')->first();
+        $cleaningService = Service::where('name', 'Teeth Cleaning')->first();
+
         Appointment::firstOrCreate(
             ['clinic_id' => $clinic->id, 'clinic_patient_id' => $clinicPatient->id, 'preferred_date' => now()->addDays(3)->toDateString()],
-            ['dentist_id' => $dentist->id, 'status' => Appointment::STATUS_REQUESTED, 'patient_note' => 'Routine checkup and cleaning.']
+            [
+                'dentist_id' => $dentist->id,
+                'service_id' => $checkupService?->id,
+                'preferred_time' => '10:30',
+                'status' => Appointment::STATUS_CONFIRMED,
+                'confirmed_at' => now(),
+                'patient_note' => 'Routine checkup and cleaning.',
+                'clinic_note' => 'Please arrive 10 minutes early and bring any recent dental reports if available.',
+            ]
+        );
+
+        $completedAppointment = Appointment::firstOrCreate(
+            ['clinic_id' => $clinic->id, 'clinic_patient_id' => $clinicPatient->id, 'preferred_date' => now()->subMonth()->toDateString()],
+            [
+                'dentist_id' => $dentist->id,
+                'service_id' => $cleaningService?->id,
+                'preferred_time' => '11:00',
+                'status' => Appointment::STATUS_COMPLETED,
+                'completed_at' => now()->subMonth(),
+            ]
+        );
+
+        Review::firstOrCreate(
+            ['appointment_id' => $completedAppointment->id, 'clinic_patient_id' => $clinicPatient->id],
+            ['clinic_id' => $clinic->id, 'rating' => 5, 'comment' => 'Friendly staff and very professional care.', 'moderation_status' => 'published']
+        );
+
+        PatientNotification::firstOrCreate(
+            ['user_id' => $patientUser->id, 'type' => 'appointment.confirmed', 'title' => $clinic->name],
+            ['body' => 'Your appointment for '.now()->addDays(3)->format('j M').' is confirmed.', 'created_at' => now()->subHours(2)]
+        );
+        PatientNotification::firstOrCreate(
+            ['user_id' => $patientUser->id, 'type' => 'clinic.note', 'title' => 'Dr. Sarah Johnson'],
+            ['body' => 'Please arrive 10 minutes early.', 'created_at' => now()->subDay()]
+        );
+        PatientNotification::firstOrCreate(
+            ['user_id' => $patientUser->id, 'type' => 'enrollment.active', 'title' => 'Dental Connect'],
+            ['body' => 'Your clinic enrollment is active.', 'created_at' => now()->subDays(2)]
         );
 
         $supplierOwner = User::firstOrCreate(
