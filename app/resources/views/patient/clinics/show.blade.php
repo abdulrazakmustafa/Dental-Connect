@@ -70,26 +70,7 @@
         @if ($clinicPatient)
             <a href="{{ route('patient.appointments.book', $clinic) }}" class="dc-btn-primary block w-full text-center">Book Appointment</a>
         @else
-            <button type="button" onclick="document.getElementById('enroll-modal').classList.remove('hidden')" class="dc-btn-primary block w-full text-center">Enroll / Book Appointment</button>
+            <a href="{{ route('patient.clinics.enroll.form', $clinic) }}" class="dc-btn-primary block w-full text-center">Enroll / Book Appointment</a>
         @endif
     </div>
-
-    @unless ($clinicPatient)
-        <div id="enroll-modal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/40 sm:items-center" style="display:none;">
-            <div class="dc-card w-full max-w-md p-6">
-                <h3 class="text-lg font-bold">Enroll with {{ $clinic->name }}</h3>
-                <p class="mt-1 text-sm text-dc-text-secondary">This creates a private patient record with this clinic.</p>
-                <form method="POST" action="{{ route('patient.clinics.enroll', $clinic) }}" class="mt-4 space-y-3">
-                    @csrf
-                    <input class="dc-input" type="text" name="first_name" placeholder="First name" required>
-                    <input class="dc-input" type="text" name="last_name" placeholder="Last name" required>
-                    <input class="dc-input" type="date" name="date_of_birth">
-                    <div class="flex gap-2">
-                        <button type="button" onclick="document.getElementById('enroll-modal').classList.add('hidden')" class="dc-btn-secondary flex-1">Cancel</button>
-                        <button type="submit" class="dc-btn-primary flex-1">Enroll</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endunless
 </x-layouts.patient-app>

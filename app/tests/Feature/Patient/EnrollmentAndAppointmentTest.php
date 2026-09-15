@@ -29,7 +29,7 @@ class EnrollmentAndAppointmentTest extends TestCase
         $this->actingAs($patient)->post(route('patient.clinics.enroll', $clinic), [
             'first_name' => 'Grace',
             'last_name' => 'Mwakasege',
-        ])->assertRedirect(route('clinics.show', $clinic));
+        ])->assertRedirect(route('patient.appointments.book', $clinic));
 
         $this->assertDatabaseHas('clinic_patients', [
             'clinic_id' => $clinic->id,

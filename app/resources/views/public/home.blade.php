@@ -1,7 +1,10 @@
+@php
+    $hasHeroPhoto = file_exists(public_path('images/hero/desktop.jpg'));
+@endphp
 <x-layouts.public :title="'Dental Connect — Better Dentistry. Connected Care.'">
     {{-- Hero --}}
     <section class="mx-auto max-w-7xl px-4 pb-20 pt-14 sm:px-6 lg:px-8 lg:pt-20">
-        <div class="grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
+        <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
             <div>
                 <span class="dc-badge bg-dc-mint text-dc-teal-deep">Tanzania's connected dental-care platform</span>
 
@@ -45,17 +48,31 @@
                 </p>
             </div>
 
-            <div class="relative hidden aspect-square items-center justify-center rounded-[2rem] bg-gradient-to-br from-dc-mint-light to-dc-aqua lg:flex">
-                <div class="absolute right-10 top-10 h-24 w-24 rounded-full bg-dc-mint/60 blur-sm"></div>
-                <div class="absolute bottom-16 left-10 h-16 w-16 rounded-full bg-dc-aqua"></div>
+            {{-- Hero visual: your clinic photos once dropped in public/images/hero/
+                 (see the README there); falls back to the brand illustration. --}}
+            <div class="relative">
+                <div class="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-gradient-to-br from-dc-mint-light to-dc-aqua shadow-[0_20px_60px_-20px_rgba(15,118,110,0.35)] sm:aspect-[5/4] lg:aspect-[4/5]">
+                    @if ($hasHeroPhoto)
+                        <picture>
+                            <source media="(max-width: 639px)" srcset="{{ asset('images/hero/mobile.jpg') }}">
+                            <source media="(max-width: 1023px)" srcset="{{ asset('images/hero/tablet.jpg') }}">
+                            <img src="{{ asset('images/hero/desktop.jpg') }}" alt="A dentist caring for a smiling patient at a Dental Connect clinic" class="h-full w-full object-cover">
+                        </picture>
+                        <div class="absolute inset-0 bg-gradient-to-t from-dc-teal-dark/25 via-transparent to-transparent"></div>
+                    @else
+                        <div class="absolute right-10 top-10 h-24 w-24 rounded-full bg-dc-mint/60 blur-sm"></div>
+                        <div class="absolute bottom-16 left-10 h-16 w-16 rounded-full bg-dc-aqua"></div>
+                        <div class="flex h-full items-center justify-center">
+                            <svg width="200" height="200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 3.2c-1.1 0-1.9.55-2.85.8-.5.13-1 .2-1.55.2C5.5 4.2 4 5.9 4 8.1c0 2.35.55 4.55 1.3 6.75.45 1.35.85 3.1 1.85 3.2.75.07.9-1.35 1.1-2.5.2-1.2.55-2.55 1.75-2.55s1.55 1.35 1.75 2.55c.2 1.15.35 2.57 1.1 2.5 1-.1 1.4-1.85 1.85-3.2.75-2.2 1.3-4.4 1.3-6.75 0-2.2-1.5-3.9-3.6-3.9-.55 0-1.05-.07-1.55-.2-.95-.25-1.75-.8-2.85-.8Z"
+                                      stroke="#14B8A6" stroke-width="1.2" stroke-linejoin="round"/>
+                                <path d="M9 10.5h6M12 7.5v6" stroke="#14B8A6" stroke-width="1.2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    @endif
+                </div>
 
-                <svg width="220" height="220" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3.2c-1.1 0-1.9.55-2.85.8-.5.13-1 .2-1.55.2C5.5 4.2 4 5.9 4 8.1c0 2.35.55 4.55 1.3 6.75.45 1.35.85 3.1 1.85 3.2.75.07.9-1.35 1.1-2.5.2-1.2.55-2.55 1.75-2.55s1.55 1.35 1.75 2.55c.2 1.15.35 2.57 1.1 2.5 1-.1 1.4-1.85 1.85-3.2.75-2.2 1.3-4.4 1.3-6.75 0-2.2-1.5-3.9-3.6-3.9-.55 0-1.05-.07-1.55-.2-.95-.25-1.75-.8-2.85-.8Z"
-                          stroke="#14B8A6" stroke-width="1.2" stroke-linejoin="round"/>
-                    <path d="M9 10.5h6M12 7.5v6" stroke="#14B8A6" stroke-width="1.2" stroke-linecap="round"/>
-                </svg>
-
-                <div class="dc-card absolute bottom-8 right-8 w-56 p-4">
+                <div class="dc-card absolute -bottom-6 left-4 w-56 p-4 sm:left-8">
                     <span class="dc-badge bg-dc-mint text-dc-teal-deep">Verified network</span>
                     <p class="mt-2 text-sm font-bold">Care you can trust</p>
                     <p class="mt-1 text-xs text-dc-text-secondary">Verified clinics, simple appointment requests and clinic-owned patient records.</p>
@@ -65,7 +82,7 @@
     </section>
 
     {{-- Feature strip --}}
-    <section id="how-it-works" class="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+    <section id="how-it-works" class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <div class="dc-card p-6">
                 <span class="dc-avatar-square h-10 w-10">✓</span>

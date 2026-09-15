@@ -32,11 +32,14 @@
 }
 
 @layer base {
-    /* The mockups use a persistent soft mint→white gradient behind every
-       screen, not a flat background — this is the single biggest visual
-       signature of the approved design. */
+    /* Every screen — public, patient app and every dashboard — sits on a
+       persistent soft mint/aqua gradient mesh rather than flat white, so
+       the glass cards actually have something to refract. */
     body {
-        background: linear-gradient(180deg, var(--color-dc-aqua) 0%, var(--color-dc-mint-light) 45%, #FFFFFF 100%);
+        background:
+            radial-gradient(1200px 600px at 85% -10%, rgba(20, 184, 166, 0.16), transparent 60%),
+            radial-gradient(900px 500px at -10% 10%, rgba(234, 251, 255, 0.9), transparent 55%),
+            linear-gradient(180deg, var(--color-dc-aqua) 0%, var(--color-dc-mint-light) 45%, #FFFFFF 100%);
         background-attachment: fixed;
     }
 
@@ -50,8 +53,17 @@
         @apply bg-white/60 backdrop-blur-md border border-white/40 shadow-sm;
     }
 
+    /* Glassmorphism is the platform's default card surface everywhere,
+       including dashboards — frosted white over the gradient mesh, with
+       enough opacity to keep body-text contrast at a safe WCAG level. */
     .dc-card {
-        @apply bg-white border border-dc-border rounded-2xl shadow-sm;
+        @apply bg-white/75 backdrop-blur-xl border border-white/60 rounded-2xl shadow-[0_4px_24px_-8px_rgba(15,118,110,0.15)];
+    }
+
+    /* Data-dense surfaces (tables, forms) get a lighter, less blurred glass
+       so long text stays crisp — still visibly "glass", just calmer. */
+    .dc-card-dense {
+        @apply bg-white/85 backdrop-blur-md border border-white/60 rounded-2xl shadow-[0_4px_24px_-8px_rgba(15,118,110,0.12)];
     }
 
     /* Primary CTA — full pill shape per mockups (Log in, Continue, Submit...) */

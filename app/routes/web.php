@@ -93,6 +93,7 @@ Route::prefix('app')->as('patient.')->middleware(['auth', 'role:patient'])->grou
     Route::patch('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule.update');
     Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 
+    Route::get('/clinics/{clinic}/enroll', [ClinicEnrollmentController::class, 'create'])->name('clinics.enroll.form');
     Route::post('/clinics/{clinic}/enroll', [ClinicEnrollmentController::class, 'store'])->name('clinics.enroll');
     Route::get('/clinics/{clinic}/book', [AppointmentController::class, 'bookForm'])->name('appointments.book');
     Route::post('/clinics/{clinic}/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
