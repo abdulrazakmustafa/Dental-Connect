@@ -1,0 +1,60 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Dental Connect brand palette — see ARCHITECTURE.md / PRD §4 visual direction */
+    --color-dc-teal: #14B8A6;
+    --color-dc-teal-deep: #0F766E;
+    --color-dc-teal-dark: #115E59;
+    --color-dc-mint: #DFF7F3;
+    --color-dc-mint-light: #F0FDFA;
+    --color-dc-aqua: #EAFBFF;
+
+    --color-dc-white: #FFFFFF;
+    --color-dc-bg: #F8FCFB;
+    --color-dc-text: #111827;
+    --color-dc-text-secondary: #6B7280;
+    --color-dc-border: #DDEEEA;
+
+    --color-dc-success: #22C55E;
+    --color-dc-warning: #F59E0B;
+    --color-dc-danger: #EF4444;
+    --color-dc-info: #3B82F6;
+}
+
+@layer components {
+    .dc-glass {
+        @apply bg-white/60 backdrop-blur-md border border-white/40 shadow-sm;
+    }
+
+    .dc-card {
+        @apply bg-white border border-dc-border rounded-2xl shadow-sm;
+    }
+
+    .dc-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-dc-teal px-5 py-2.5
+            text-sm font-semibold text-white shadow-sm transition hover:bg-dc-teal-deep
+            focus:outline-none focus:ring-2 focus:ring-dc-teal focus:ring-offset-2 disabled:opacity-50;
+    }
+
+    .dc-btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-dc-border
+            bg-white px-5 py-2.5 text-sm font-semibold text-dc-text shadow-sm transition
+            hover:bg-dc-mint-light focus:outline-none focus:ring-2 focus:ring-dc-teal;
+    }
+
+    .dc-input {
+        @apply block w-full rounded-xl border border-dc-border bg-white px-4 py-2.5 text-sm
+            text-dc-text placeholder:text-dc-text-secondary focus:outline-none
+            focus:ring-2 focus:ring-dc-teal focus:border-transparent;
+    }
+
+    .dc-badge {
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+    }
+}
