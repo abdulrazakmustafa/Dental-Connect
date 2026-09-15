@@ -32,21 +32,48 @@
         {{ $slot }}
     </main>
 
-    <footer class="mt-16 border-t border-dc-border/70">
-        <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <p class="text-sm text-dc-text-secondary">&copy; Dental Connect &middot; dentalconnect.co.tz</p>
-                <div class="flex items-center gap-4 text-sm text-dc-text-secondary">
-                    <a href="{{ route('for-patients') }}" class="hover:text-dc-teal-deep">Patients</a>
-                    <span>&middot;</span>
-                    <a href="{{ route('for-clinics') }}" class="hover:text-dc-teal-deep">Clinics</a>
-                    <span>&middot;</span>
-                    <a href="{{ route('for-suppliers') }}" class="hover:text-dc-teal-deep">Suppliers</a>
-                    <span>&middot;</span>
-                    <a href="{{ route('admin.login') }}" class="hover:text-dc-teal-deep">Administration</a>
+    <footer class="relative mt-8 overflow-hidden border-t border-dc-border/70 bg-white/60 backdrop-blur">
+        <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 gap-8 sm:grid-cols-5">
+                <div class="col-span-2">
+                    <x-dc-logo :size="34" />
+                    <p class="mt-3 max-w-xs text-sm text-dc-text-secondary">Connecting patients, dental clinics and suppliers across Tanzania through one secure, verified ecosystem.</p>
+                    <p class="mt-4 text-sm text-dc-text-secondary">
+                        <a href="mailto:hello@dentalconnect.co.tz" class="font-semibold text-dc-teal-deep hover:underline">hello@dentalconnect.co.tz</a>
+                    </p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase text-dc-text-secondary">Platform</p>
+                    <ul class="mt-3 space-y-2 text-sm text-dc-text-secondary">
+                        <li><a href="{{ route('for-patients') }}" class="hover:text-dc-teal-deep">For Patients</a></li>
+                        <li><a href="{{ route('for-clinics') }}" class="hover:text-dc-teal-deep">For Clinics</a></li>
+                        <li><a href="{{ route('for-suppliers') }}" class="hover:text-dc-teal-deep">For Suppliers</a></li>
+                        <li><a href="{{ route('clinics.index') }}" class="hover:text-dc-teal-deep">Find Clinics</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase text-dc-text-secondary">Company</p>
+                    <ul class="mt-3 space-y-2 text-sm text-dc-text-secondary">
+                        <li><a href="{{ route('about') }}" class="hover:text-dc-teal-deep">About</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-dc-teal-deep">Contact</a></li>
+                        <li><a href="{{ route('admin.login') }}" class="hover:text-dc-teal-deep">Administration</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-xs font-bold uppercase text-dc-text-secondary">Account</p>
+                    <ul class="mt-3 space-y-2 text-sm text-dc-text-secondary">
+                        <li><a href="{{ route('login') }}" class="hover:text-dc-teal-deep">Log in</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:text-dc-teal-deep">Register</a></li>
+                    </ul>
                 </div>
             </div>
+
+            <div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-dc-border/70 pt-6 sm:flex-row">
+                <p class="text-xs text-dc-text-secondary">&copy; {{ date('Y') }} Dental Connect &middot; dentalconnect.co.tz &middot; Dar es Salaam, Tanzania</p>
+            </div>
         </div>
+
+        <p class="pointer-events-none absolute -bottom-6 left-1/2 hidden -translate-x-1/2 select-none text-[7rem] font-extrabold leading-none text-dc-teal/5 sm:block" aria-hidden="true">Dental Connect</p>
     </footer>
     @livewireScripts
 </body>

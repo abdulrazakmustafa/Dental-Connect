@@ -3,6 +3,9 @@
 namespace App\Modules\Identity\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Clinic\Models\Clinic;
+use App\Modules\Clinic\Models\Dentist;
+use App\Modules\TrustSupport\Models\Review;
 use Illuminate\View\View;
 
 /**
@@ -14,7 +17,15 @@ class PublicPageController extends Controller
 {
     public function home(): View
     {
-        return view('public.home');
+        $verifiedClinics = Clinic::where('verification_status', Clinic::STATUS_APPROVED)->where('is_active', true)->count();
+        $registeredDentists = Dentist::where('status', 'active')->count();
+        $avgRating = Review::where('moderation_status', 'published')->avg('rating');
+
+        return view('public.home', [
+            'verifiedClinics' => $verifiedClinics,
+            'registeredDentists' => $registeredDentists,
+            'avgRating' => $avgRating,
+        ]);
     }
 
     public function forPatients(): View

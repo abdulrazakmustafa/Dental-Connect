@@ -16,6 +16,7 @@ use App\Modules\Identity\Http\Controllers\Auth\AdminLoginController;
 use App\Modules\Identity\Http\Controllers\Auth\LoginController;
 use App\Modules\Identity\Http\Controllers\Auth\PasswordResetController;
 use App\Modules\Identity\Http\Controllers\Auth\RegisterController;
+use App\Modules\Identity\Http\Controllers\Public\NewsletterController;
 use App\Modules\Identity\Http\Controllers\Public\PublicPageController;
 use App\Modules\Marketplace\Http\Controllers\MarketplaceController;
 use App\Modules\Marketplace\Http\Controllers\RfqController;
@@ -40,6 +41,7 @@ Route::get('/for-clinics', [PublicPageController::class, 'forClinics'])->name('f
 Route::get('/for-suppliers', [PublicPageController::class, 'forSuppliers'])->name('for-suppliers');
 Route::get('/about', [PublicPageController::class, 'about'])->name('about');
 Route::get('/contact', [PublicPageController::class, 'contact'])->name('contact');
+Route::post('/newsletter', [NewsletterController::class, 'store'])->middleware('throttle:5,1')->name('newsletter.store');
 
 Route::get('/clinics', [ClinicDirectoryController::class, 'index'])->name('clinics.index');
 Route::get('/clinics/{clinic}', [ClinicDirectoryController::class, 'show'])->name('clinics.show');
