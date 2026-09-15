@@ -1,12 +1,7 @@
 @php
-    $nav = [
-        ['route' => 'clinic.dashboard', 'label' => 'Dashboard', 'icon' => '🏠'],
-        ['route' => 'clinic.patients.index', 'label' => 'My Patients', 'icon' => '🧑‍⚕️'],
-        ['route' => 'clinic.appointments.index', 'label' => 'Appointments', 'icon' => '📅'],
-        ['route' => 'marketplace.home', 'label' => 'Marketplace', 'icon' => '🛒'],
-        ['route' => 'clinic.rfqs.index', 'label' => 'RFQs', 'icon' => '✉️'],
-    ];
-
+    $nav = include resource_path('views/clinic/_nav.php');
+@endphp
+@php
     $nextStatuses = [
         'requested' => ['confirmed' => 'Confirm', 'declined' => 'Decline'],
         'reschedule_proposed' => ['confirmed' => 'Confirm', 'declined' => 'Decline'],

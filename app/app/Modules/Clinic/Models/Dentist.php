@@ -2,12 +2,17 @@
 
 namespace App\Modules\Clinic\Models;
 
+use App\Modules\Clinic\Policies\DentistPolicy;
 use App\Modules\Shared\Concerns\HasPublicUlid;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+#[UsePolicy(DentistPolicy::class)]
+#[UseFactory(\Database\Factories\DentistFactory::class)]
 class Dentist extends Model
 {
     use HasFactory, HasPublicUlid;

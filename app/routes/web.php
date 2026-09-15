@@ -4,10 +4,14 @@ use App\Modules\AdminAnalytics\Http\Controllers\AdminDashboardController;
 use App\Modules\AdminAnalytics\Http\Controllers\ClinicVerificationController;
 use App\Modules\AdminAnalytics\Http\Controllers\ProductModerationController;
 use App\Modules\Appointment\Http\Controllers\AppointmentController;
+use App\Modules\Clinic\Http\Controllers\ClinicAvailabilityController;
 use App\Modules\Clinic\Http\Controllers\ClinicDashboardController;
 use App\Modules\Clinic\Http\Controllers\ClinicDirectoryController;
 use App\Modules\Clinic\Http\Controllers\ClinicOnboardingController;
 use App\Modules\Clinic\Http\Controllers\ClinicPatientController;
+use App\Modules\Clinic\Http\Controllers\ClinicServiceController;
+use App\Modules\Clinic\Http\Controllers\ClinicStaffController;
+use App\Modules\Clinic\Http\Controllers\DentistController;
 use App\Modules\Identity\Http\Controllers\Auth\AdminLoginController;
 use App\Modules\Identity\Http\Controllers\Auth\LoginController;
 use App\Modules\Identity\Http\Controllers\Auth\PasswordResetController;
@@ -114,6 +118,24 @@ Route::prefix('clinic')->as('clinic.')->middleware(['auth', 'role:clinic_owner|c
     Route::get('/appointments', [AppointmentController::class, 'clinicIndex'])->name('appointments.index');
     Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.status');
     Route::get('/rfqs', [RfqController::class, 'clinicIndex'])->name('rfqs.index');
+
+    Route::get('/dentists', [DentistController::class, 'index'])->name('dentists.index');
+    Route::get('/dentists/create', [DentistController::class, 'create'])->name('dentists.create');
+    Route::post('/dentists', [DentistController::class, 'store'])->name('dentists.store');
+    Route::get('/dentists/{dentist}/edit', [DentistController::class, 'edit'])->name('dentists.edit');
+    Route::put('/dentists/{dentist}', [DentistController::class, 'update'])->name('dentists.update');
+
+    Route::get('/services', [ClinicServiceController::class, 'index'])->name('services.index');
+    Route::put('/services', [ClinicServiceController::class, 'update'])->name('services.update');
+
+    Route::get('/availability', [ClinicAvailabilityController::class, 'index'])->name('availability.index');
+    Route::put('/availability', [ClinicAvailabilityController::class, 'update'])->name('availability.update');
+    Route::post('/availability/blackout-dates', [ClinicAvailabilityController::class, 'storeBlackout'])->name('availability.blackout.store');
+    Route::delete('/availability/blackout-dates/{blackoutDate}', [ClinicAvailabilityController::class, 'destroyBlackout'])->name('availability.blackout.destroy');
+
+    Route::get('/staff', [ClinicStaffController::class, 'index'])->name('staff.index');
+    Route::post('/staff', [ClinicStaffController::class, 'store'])->name('staff.store');
+    Route::delete('/staff/{clinicStaff}', [ClinicStaffController::class, 'destroy'])->name('staff.destroy');
 });
 
 /*

@@ -1,11 +1,5 @@
 @php
-    $nav = [
-        ['route' => 'clinic.dashboard', 'label' => 'Dashboard', 'icon' => '🏠'],
-        ['route' => 'clinic.patients.index', 'label' => 'My Patients', 'icon' => '🧑‍⚕️'],
-        ['route' => 'clinic.appointments.index', 'label' => 'Appointments', 'icon' => '📅'],
-        ['route' => 'marketplace.home', 'label' => 'Marketplace', 'icon' => '🛒'],
-        ['route' => 'clinic.rfqs.index', 'label' => 'RFQs', 'icon' => '✉️'],
-    ];
+    $nav = include resource_path('views/clinic/_nav.php');
 @endphp
 <x-layouts.dashboard title="My Patients" :nav="$nav">
     <form method="GET" class="mb-4">

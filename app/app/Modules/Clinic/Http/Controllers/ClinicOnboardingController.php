@@ -15,17 +15,26 @@ use Illuminate\View\View;
  * Clinic profile completion + verification submission (PRD §7.3, §26
  * "Clinic verification" workflow steps 11-18). Approval itself is an admin
  * action (ClinicVerificationController) — this controller only submits.
+ *
+ * This same form is reused after approval for ordinary profile edits
+ * (services/pricing/description/location) — those must NOT silently kick
+ * an already-approved clinic back into "pending verification"; only a
+ * clinic still in draft/changes_requested actually (re)submits.
  */
 class ClinicOnboardingController extends Controller
 {
+    private const SUBMITTABLE_STATUSES = [Clinic::STATUS_DRAFT, Clinic::STATUS_CHANGES_REQUESTED];
+
     public function create(Request $request): View
     {
         $clinic = $request->user()->ownedClinics()->firstOrFail();
+        $clinic->load(['primaryLocation', 'services', 'specialties']);
 
         return view('clinic.onboarding', [
             'clinic' => $clinic,
             'services' => Service::where('is_active', true)->orderBy('sort_order')->get(),
             'specialties' => Specialty::where('is_active', true)->orderBy('sort_order')->get(),
+            'isSubmission' => in_array($clinic->verification_status, self::SUBMITTABLE_STATUSES, true),
         ]);
     }
 
@@ -45,7 +54,9 @@ class ClinicOnboardingController extends Controller
             'specialties.*' => ['exists:specialties,id'],
         ]);
 
-        DB::transaction(function () use ($clinic, $data) {
+        $isSubmission = in_array($clinic->verification_status, self::SUBMITTABLE_STATUSES, true);
+
+        DB::transaction(function () use ($clinic, $data, $isSubmission) {
             $clinic->update(['description' => $data['description'] ?? null]);
 
             $clinic->locations()->updateOrCreate(
@@ -58,22 +69,34 @@ class ClinicOnboardingController extends Controller
                 ]
             );
 
-            $clinic->services()->sync($data['services'] ?? []);
+            // Preserve per-service pricing for services that stay selected;
+            // only detach removed ones and attach newly-added ones (sync()
+            // would otherwise wipe the price pivot on every save).
+            $selectedServiceIds = $data['services'] ?? [];
+            $currentServiceIds = $clinic->services()->pluck('services.id')->all();
+            $clinic->services()->detach(array_diff($currentServiceIds, $selectedServiceIds));
+            $clinic->services()->syncWithoutDetaching(array_diff($selectedServiceIds, $currentServiceIds));
+
             $clinic->specialties()->sync($data['specialties'] ?? []);
 
-            $clinic->update([
-                'verification_status' => Clinic::STATUS_SUBMITTED,
-                'profile_completion_percent' => 80,
-            ]);
+            if ($isSubmission) {
+                $clinic->update([
+                    'verification_status' => Clinic::STATUS_SUBMITTED,
+                    'profile_completion_percent' => 80,
+                ]);
 
-            $clinic->verificationSubmissions()->create([
-                'verifiable_type' => Clinic::class,
-                'verifiable_id' => $clinic->id,
-                'status' => Clinic::STATUS_SUBMITTED,
-                'submitted_at' => now(),
-            ]);
+                $clinic->verificationSubmissions()->create([
+                    'verifiable_type' => Clinic::class,
+                    'verifiable_id' => $clinic->id,
+                    'status' => Clinic::STATUS_SUBMITTED,
+                    'submitted_at' => now(),
+                ]);
+            }
         });
 
-        return redirect()->route('clinic.dashboard')->with('status', 'Your profile was submitted for verification.');
+        return redirect()->route('clinic.dashboard')->with(
+            'status',
+            $isSubmission ? 'Your profile was submitted for verification.' : 'Profile updated.'
+        );
     }
 }
