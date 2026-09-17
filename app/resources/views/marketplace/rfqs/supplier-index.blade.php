@@ -21,7 +21,7 @@
                 @forelse ($rfqs as $rfq)
                     <tr>
                         <td class="px-4 py-3"><a href="{{ route('marketplace.rfqs.show', $rfq) }}" class="font-medium text-dc-teal-dark">{{ $rfq->clinic->name }}</a></td>
-                        <td class="px-4 py-3">{{ $rfq->product?->name ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $rfq->product?->name ?? '-' }}</td>
                         <td class="px-4 py-3"><span class="dc-badge bg-dc-mint text-dc-teal-dark">{{ ucfirst($rfq->status) }}</span></td>
                         <td class="px-4 py-3">{{ $rfq->created_at->format('j M Y') }}</td>
                     </tr>

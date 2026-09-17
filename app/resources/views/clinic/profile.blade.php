@@ -1,4 +1,4 @@
-<x-layouts.public :title="$clinic->name.' — Dental Connect'">
+<x-layouts.public :title="$clinic->name.' | Dental Connect'">
     <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         @if (session('status'))
             <div class="mb-6 rounded-xl border border-dc-success/30 bg-green-50 p-4 text-sm text-dc-success">

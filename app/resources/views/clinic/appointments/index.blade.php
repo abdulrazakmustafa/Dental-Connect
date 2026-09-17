@@ -25,7 +25,7 @@
                     <tr>
                         <td class="px-4 py-3">{{ $appointment->preferred_date->format('j M Y') }}</td>
                         <td class="px-4 py-3">{{ $appointment->clinicPatient->fullName() }}</td>
-                        <td class="px-4 py-3">{{ $appointment->dentist?->full_name ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $appointment->dentist?->full_name ?? '-' }}</td>
                         <td class="px-4 py-3"><span class="dc-badge bg-dc-mint text-dc-teal-dark">{{ ucfirst(str_replace('_', ' ', $appointment->status)) }}</span></td>
                         <td class="px-4 py-3">
                             <div class="flex gap-2">

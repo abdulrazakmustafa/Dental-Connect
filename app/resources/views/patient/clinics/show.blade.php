@@ -43,7 +43,7 @@
                 <p class="text-xs text-dc-text-secondary">Open</p>
             </div>
             <div>
-                <p class="font-bold">{{ $clinic->primaryLocation?->city ?? '—' }}</p>
+                <p class="font-bold">{{ $clinic->primaryLocation?->city ?? '-' }}</p>
                 <p class="text-xs text-dc-text-secondary">Location</p>
             </div>
         </div>

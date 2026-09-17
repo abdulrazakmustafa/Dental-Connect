@@ -24,8 +24,8 @@
                             <a href="{{ route('clinic.patients.show', $patient) }}" class="font-medium text-dc-teal-dark">{{ $patient->patient_number }}</a>
                         </td>
                         <td class="px-4 py-3">{{ $patient->fullName() }}</td>
-                        <td class="px-4 py-3">{{ $patient->phone ?? '—' }}</td>
-                        <td class="px-4 py-3">{{ $patient->assignedDentist?->full_name ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $patient->phone ?? '-' }}</td>
+                        <td class="px-4 py-3">{{ $patient->assignedDentist?->full_name ?? '-' }}</td>
                         <td class="px-4 py-3"><span class="dc-badge bg-dc-mint text-dc-teal-dark">{{ ucfirst($patient->status) }}</span></td>
                     </tr>
                 @empty

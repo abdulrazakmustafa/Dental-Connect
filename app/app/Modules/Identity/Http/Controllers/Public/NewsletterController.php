@@ -18,6 +18,6 @@ class NewsletterController extends Controller
             ['subscribed_at' => now()]
         );
 
-        return back()->with('status', "Thanks — we'll keep {$data['email']} posted.");
+        return back()->with('status', "Thanks! We'll keep {$data['email']} posted.");
     }
 }

@@ -32,9 +32,10 @@
 }
 
 @layer base {
-    /* Every screen — public, patient app and every dashboard — sits on a
-       persistent soft mint/aqua gradient mesh rather than flat white, so
-       the glass cards actually have something to refract. */
+    html {
+        scroll-behavior: smooth;
+    }
+
     body {
         background:
             radial-gradient(1200px 600px at 85% -10%, rgba(20, 184, 166, 0.16), transparent 60%),
@@ -45,6 +46,23 @@
 
     [x-cloak] {
         display: none !important;
+    }
+
+    img {
+        image-rendering: auto;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-dc-teal);
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+        }
     }
 }
 

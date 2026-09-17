@@ -28,7 +28,7 @@
                             <tr>
                                 <td class="px-4 py-3 font-medium">{{ $service->name }}</td>
                                 <td class="px-4 py-3">
-                                    <input class="dc-input max-w-xs" type="number" step="0.01" min="0" name="prices[{{ $service->id }}]" value="{{ $service->pivot->price }}" placeholder="Not set — shown as 'price on request'">
+                                    <input class="dc-input max-w-xs" type="number" step="0.01" min="0" name="prices[{{ $service->id }}]" value="{{ $service->pivot->price }}" placeholder="Not set (shown as 'price on request')">
                                 </td>
                             </tr>
                         @endforeach

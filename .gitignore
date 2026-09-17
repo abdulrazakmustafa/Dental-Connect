@@ -26,3 +26,7 @@ app/.idea
 app/.nova
 app/.vscode
 app/.zed
+
+# Uncompressed source photos kept locally for re-cropping; the app only
+# serves the optimized copies under app/public/images/*.
+references/

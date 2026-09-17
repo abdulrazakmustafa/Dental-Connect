@@ -14,7 +14,7 @@
                 <p class="mt-1 text-sm text-dc-text-secondary">This information is reviewed by the Dental Connect team before your clinic becomes publicly visible.</p>
             @else
                 <h2 class="text-lg font-semibold">Edit {{ $clinic->name }}'s profile</h2>
-                <p class="mt-1 text-sm text-dc-text-secondary">Your clinic is verified — these changes go live immediately and do not require re-verification.</p>
+                <p class="mt-1 text-sm text-dc-text-secondary">Your clinic is verified: these changes go live immediately and do not require re-verification.</p>
             @endif
 
             @if ($errors->any())

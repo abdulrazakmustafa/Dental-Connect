@@ -1,4 +1,4 @@
-<x-layouts.public :title="'Find a Clinic — Dental Connect'">
+<x-layouts.public :title="'Find a Clinic | Dental Connect'">
     <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <h1 class="text-2xl font-bold">Find a verified dental clinic</h1>
 

@@ -43,7 +43,7 @@
     </form>
 
     <h2 class="mt-8 font-semibold">Blackout dates</h2>
-    <p class="text-sm text-dc-text-secondary">Days the whole clinic is closed (holidays, maintenance) — shown to patients as unavailable.</p>
+    <p class="text-sm text-dc-text-secondary">Days the whole clinic is closed (holidays, maintenance), shown to patients as unavailable.</p>
 
     <form method="POST" action="{{ route('clinic.availability.blackout.store') }}" class="mt-3 flex flex-wrap items-end gap-3">
         @csrf

@@ -29,7 +29,7 @@
 
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="dc-card p-5 lg:col-span-2">
-            <h2 class="font-semibold">Platform signups — last 14 days</h2>
+            <h2 class="font-semibold">Platform signups (last 14 days)</h2>
             <div class="mt-4 h-64">
                 <canvas id="signupTrendChart"></canvas>
             </div>

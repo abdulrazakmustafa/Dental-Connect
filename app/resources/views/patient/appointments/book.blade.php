@@ -73,7 +73,7 @@
                         <svg x-show="serviceId === {{ $service->id }}" width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-dc-teal"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                 @empty
-                    <p class="text-sm text-dc-text-secondary">This clinic has not listed specific services yet — you can still request a general appointment.</p>
+                    <p class="text-sm text-dc-text-secondary">This clinic has not listed specific services yet. You can still request a general appointment.</p>
                 @endforelse
             </div>
 

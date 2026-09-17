@@ -33,7 +33,7 @@
                     <div>
                         <label class="mb-1 block text-sm font-medium">Category</label>
                         <select class="dc-input" name="category_id">
-                            <option value="">— None —</option>
+                            <option value="">None</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>{{ $category->name }}</option>
                             @endforeach

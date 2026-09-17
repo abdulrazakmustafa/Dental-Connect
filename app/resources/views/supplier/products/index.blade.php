@@ -28,8 +28,8 @@
                 @forelse ($products as $product)
                     <tr>
                         <td class="px-4 py-3 font-medium">{{ $product->name }}</td>
-                        <td class="px-4 py-3">{{ $product->category?->name ?? '—' }}</td>
-                        <td class="px-4 py-3">{{ $product->price ? number_format($product->price, 0).' TZS' : '—' }}</td>
+                        <td class="px-4 py-3">{{ $product->category?->name ?? '-' }}</td>
+                        <td class="px-4 py-3">{{ $product->price ? number_format($product->price, 0).' TZS' : '-' }}</td>
                         <td class="px-4 py-3">
                             <span @class([
                                 'dc-badge' => true,

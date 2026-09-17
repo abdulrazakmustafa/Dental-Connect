@@ -34,7 +34,7 @@
         </div>
         <div class="dc-card p-5">
             <p class="text-xs font-semibold uppercase text-dc-text-secondary">Completion rate (30d)</p>
-            <p class="mt-2 text-3xl font-bold text-dc-teal-dark">{{ $completionRate !== null ? $completionRate.'%' : '—' }}</p>
+            <p class="mt-2 text-3xl font-bold text-dc-teal-dark">{{ $completionRate !== null ? $completionRate.'%' : '-' }}</p>
         </div>
         <div class="dc-card p-5">
             <p class="text-xs font-semibold uppercase text-dc-text-secondary">Marketplace enquiries</p>
@@ -44,7 +44,7 @@
 
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="dc-card p-5 lg:col-span-2">
-            <h2 class="font-semibold">Appointment requests — last 14 days</h2>
+            <h2 class="font-semibold">Appointment requests (last 14 days)</h2>
             <div class="mt-4 h-64">
                 <canvas id="appointmentTrendChart"></canvas>
             </div>

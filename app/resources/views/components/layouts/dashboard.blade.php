@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }} — Dental Connect</title>
+    <title>{{ $title }} | Dental Connect</title>
     @vite(array_filter(['resources/css/app.css', 'resources/js/app.js', $charts ? 'resources/js/charts.js' : null]))
     @livewireStyles
 </head>

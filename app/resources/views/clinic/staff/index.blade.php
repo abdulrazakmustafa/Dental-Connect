@@ -31,7 +31,7 @@
                                     <p class="font-medium">{{ $member->user->name }}</p>
                                     <p class="text-xs text-dc-text-secondary">{{ $member->user->email }}</p>
                                 </td>
-                                <td class="px-4 py-3">{{ $member->title ?? '—' }}</td>
+                                <td class="px-4 py-3">{{ $member->title ?? '-' }}</td>
                                 <td class="px-4 py-3"><span class="dc-badge bg-dc-mint text-dc-teal-deep">{{ $member->user->getRoleNames()->first() }}</span></td>
                                 <td class="px-4 py-3">
                                     <form method="POST" action="{{ route('clinic.staff.destroy', $member) }}" onsubmit="return confirm('Remove this staff member?')">
@@ -51,7 +51,7 @@
         <div>
             <div class="dc-card p-5">
                 <h2 class="font-semibold">Add staff member</h2>
-                <p class="mt-1 text-xs text-dc-text-secondary">If they don't have a Dental Connect account yet, one is created and a temporary password is shown once — share it with them directly.</p>
+                <p class="mt-1 text-xs text-dc-text-secondary">If they don't have a Dental Connect account yet, one is created and a temporary password is shown once. Share it with them directly.</p>
                 <form method="POST" action="{{ route('clinic.staff.store') }}" class="mt-4 space-y-3">
                     @csrf
                     <input class="dc-input" type="text" name="name" placeholder="Full name" value="{{ old('name') }}" required>

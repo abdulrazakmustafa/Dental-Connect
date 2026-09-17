@@ -32,7 +32,7 @@ class ClinicStaffController extends Controller
         return redirect()->route('clinic.staff.index')->with(
             'status',
             $result['temporaryPassword']
-                ? "Staff added. Temporary password for {$result['user']->email}: {$result['temporaryPassword']} (share this with them directly — it will not be shown again)."
+                ? "Staff added. Temporary password for {$result['user']->email}: {$result['temporaryPassword']} (share this with them directly; it will not be shown again)."
                 : 'Staff added.'
         );
     }
