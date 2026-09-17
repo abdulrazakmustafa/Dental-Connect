@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Dental Connect' }}</title>
     <meta name="description" content="Dental Connect helps patients discover verified clinics and manage appointments, while clinics and suppliers operate through secure professional workspaces built for the dental ecosystem.">
+    <script>document.documentElement.classList.add('js-reveal');</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -16,16 +17,13 @@
             x-data="{ scrolled: false }"
             x-init="scrolled = window.scrollY > 40"
             @scroll.window="scrolled = window.scrollY > 40"
-            :class="scrolled ? 'bg-white/85 backdrop-blur-xl border-b border-dc-border/40' : 'bg-transparent border-b border-transparent'"
+            :class="scrolled ? 'bg-white/85 backdrop-blur-xl border-b border-dc-border/40' : 'bg-transparent border-b border-white/15'"
             class="fixed inset-x-0 top-0 z-50 transition-colors duration-300">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
                 <a href="{{ route('home') }}" class="flex items-center">
-                    {{-- Icon-only mark on mobile, swapped white/color as the header crosses from transparent to solid --}}
-                    <img :src="scrolled ? '{{ asset('images/logo/dental-connect-icon-color.png') }}' : '{{ asset('images/logo/dental-connect-icon-white.png') }}'"
-                         alt="Dental Connect" class="h-9 w-9 shrink-0 object-contain sm:hidden">
-                    {{-- Full wordmark lockup from sm and up --}}
+                    {{-- Full readable wordmark lockup at every breakpoint, swapped white/color as the header crosses from transparent to solid --}}
                     <img :src="scrolled ? '{{ asset('images/logo/dental-connect-full-color.png') }}' : '{{ asset('images/logo/dental-connect-full-white.png') }}'"
-                         alt="Dental Connect" class="hidden h-8 w-auto shrink-0 object-contain sm:block">
+                         alt="Dental Connect" class="h-7 w-auto shrink-0 object-contain sm:h-8">
                 </a>
 
                 <nav :class="scrolled ? 'text-dc-text' : 'text-white/90'" class="hidden items-center gap-5 text-sm font-medium transition-colors duration-300 lg:flex lg:gap-7">

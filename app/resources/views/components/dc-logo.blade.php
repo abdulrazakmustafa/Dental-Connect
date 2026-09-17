@@ -7,21 +7,14 @@
                  style="height: {{ $size }}px; width: {{ $size }}px;" class="shrink-0 object-contain">
         </picture>
     @else
-        {{-- Icon-only mark below sm, full wordmark lockup from sm and up --}}
-        <picture class="sm:hidden">
-            <source srcset="{{ asset('images/logo/dental-connect-icon-color.webp') }}" type="image/webp">
-            <img src="{{ asset('images/logo/dental-connect-icon-color.png') }}" alt="Dental Connect"
-                 style="height: {{ $size }}px; width: {{ $size }}px;" class="shrink-0 object-contain">
+        {{-- Readable full wordmark lockup at every breakpoint, including mobile --}}
+        <picture>
+            <source srcset="{{ asset('images/logo/dental-connect-full-color.webp') }}" type="image/webp">
+            <img src="{{ asset('images/logo/dental-connect-full-color.png') }}" alt="Dental Connect"
+                 style="height: {{ round($size * 0.8) }}px;" class="w-auto shrink-0 object-contain">
         </picture>
-        <div class="hidden items-center gap-2.5 sm:flex">
-            <picture>
-                <source srcset="{{ asset('images/logo/dental-connect-full-color.webp') }}" type="image/webp">
-                <img src="{{ asset('images/logo/dental-connect-full-color.png') }}" alt="Dental Connect"
-                     style="height: {{ round($size * 0.85) }}px;" class="w-auto shrink-0 object-contain">
-            </picture>
-            @if ($tagline)
-                <span class="hidden border-l border-dc-border pl-2.5 text-xs leading-tight text-dc-text-secondary lg:block">{{ $tagline }}</span>
-            @endif
-        </div>
+        @if ($tagline)
+            <span class="hidden border-l border-dc-border pl-2.5 text-xs leading-tight text-dc-text-secondary lg:block">{{ $tagline }}</span>
+        @endif
     @endif
 </div>

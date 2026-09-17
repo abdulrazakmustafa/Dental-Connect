@@ -61,8 +61,26 @@
         *, *::before, *::after {
             animation-duration: 0.01ms !important;
             animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            transition-delay: 0ms !important;
             scroll-behavior: auto !important;
         }
+    }
+
+    /* Scroll-reveal: gated behind .js-reveal (set by an inline script in
+       <head>) so content is never hidden if JavaScript fails to load —
+       see resources/js/app.js for the IntersectionObserver that adds
+       .is-revealed. */
+    .js-reveal [data-reveal] {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        transition-delay: var(--reveal-delay, 0ms);
+    }
+
+    .js-reveal [data-reveal].is-revealed {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 

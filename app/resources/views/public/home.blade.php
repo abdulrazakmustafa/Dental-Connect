@@ -6,7 +6,21 @@
 <x-layouts.public :title="'Dental Connect | Family-Friendly Dental Care'" :transparent-header="true">
 
     {{-- HERO — Full-viewport image background (Dentora-inspired layout) --}}
-    <section class="relative min-h-screen overflow-hidden bg-dc-teal-dark">
+    <section
+        x-data="{
+            cardIndex: 0,
+            totalCards: 2,
+            scrollToCard(i) {
+                this.cardIndex = Math.max(0, Math.min(this.totalCards - 1, i));
+                const track = this.$refs.cardTrack;
+                const target = track.children[this.cardIndex];
+                if (!track || !target) return;
+                const trackRect = track.getBoundingClientRect();
+                const targetRect = target.getBoundingClientRect();
+                track.scrollTo({ left: track.scrollLeft + (targetRect.left - trackRect.left), behavior: 'smooth' });
+            }
+        }"
+        class="relative min-h-screen overflow-hidden bg-dc-teal-dark">
         {{-- Background image --}}
         <div class="absolute inset-0">
             @if ($hasHeroPhoto)
@@ -45,14 +59,14 @@
                             A new platform connecting you with verified, licensed dental clinics across Tanzania. Compare real patient experiences and choose with confidence.
                         </p>
 
-                        <div class="mt-5 flex flex-wrap gap-2.5">
+                        <div class="-mx-4 mt-5 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
                             @foreach ([
                                 ['label' => 'Verified Clinics', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>'],
                                 ['label' => 'Transparent Pricing', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>'],
                                 ['label' => 'Trusted Reviews', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>'],
                             ] as $chip)
-                                <span class="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white/90 backdrop-blur-sm">
-                                    <svg class="h-4 w-4 text-dc-teal" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">{!! $chip['icon'] !!}</svg>
+                                <span class="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur-sm sm:px-3.5 sm:text-xs">
+                                    <svg class="h-3.5 w-3.5 shrink-0 text-dc-teal sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">{!! $chip['icon'] !!}</svg>
                                     {{ $chip['label'] }}
                                 </span>
                             @endforeach
@@ -61,11 +75,11 @@
                 </div>
             </div>
 
-            {{-- Reserve strip: matches the floating card's footprint so the flex-1 area above truly ends there,
-                 letting the hero text center within genuinely available space instead of overlapping the card --}}
-            <div class="hidden shrink-0 sm:block sm:h-[280px]" aria-hidden="true"></div>
+            {{-- Reserve strip: matches the card row's footprint so the flex-1 area above truly ends there,
+                 letting the hero text center within genuinely available space instead of overlapping it --}}
+            <div class="h-[270px] shrink-0 sm:h-[190px] lg:h-[200px]" aria-hidden="true"></div>
 
-            {{-- Bottom bar — extra bottom clearance on mobile so nothing sits behind the floating app nav --}}
+            {{-- Bottom bar — extra bottom clearance below lg so nothing sits behind the floating app nav --}}
             <div class="relative z-10 mx-auto w-full max-w-7xl px-4 pb-28 lg:pb-6 lg:px-8">
                 <div class="grid grid-cols-3 items-center gap-2 border-t border-white/15 pt-5">
                     <div class="invisible sm:visible">
@@ -79,48 +93,84 @@
 
                     <div class="flex items-center justify-end gap-2 sm:gap-3">
                         <span class="hidden text-xs font-medium text-white sm:inline">Preview</span>
-                        <span class="text-sm font-bold text-white">01<span class="text-white/70"> / 08</span></span>
+                        <span class="text-sm font-bold text-white"><span x-text="String(cardIndex + 1).padStart(2, '0')"></span><span class="text-white/70"> / <span x-text="String(totalCards).padStart(2, '0')"></span></span></span>
                         <div class="hidden items-center gap-2 sm:flex">
-                            <span class="text-xs font-semibold text-white/80">Prev</span>
-                            <span class="text-xs font-semibold text-white">Next</span>
+                            <button type="button" @click="scrollToCard(cardIndex - 1)" :disabled="cardIndex === 0"
+                                    :class="cardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:text-white'"
+                                    class="text-xs font-semibold text-white/80 transition">Prev</button>
+                            <button type="button" @click="scrollToCard(cardIndex + 1)" :disabled="cardIndex === totalCards - 1"
+                                    :class="cardIndex === totalCards - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:text-white/80'"
+                                    class="text-xs font-semibold text-white transition">Next</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Floating card: inset image + rating (extra bottom offset below lg clears the floating app nav) --}}
-        <div class="absolute bottom-28 left-6 z-10 hidden w-52 overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl sm:block lg:bottom-24 lg:left-8 lg:w-60">
-            <img src="{{ asset('images/landing/dental-examination-closeup.webp') }}" alt="Professional dental examination"
-                 class="h-24 w-full object-cover lg:h-28" loading="eager">
-            <div class="px-3 py-2.5">
-                <p class="text-[11px] leading-snug text-white/80">Restore natural healthy confident dental growth.</p>
-                <div class="mt-1.5 flex items-center gap-1.5">
-                    <svg class="h-3 w-3 shrink-0 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    <span class="text-xs font-bold text-white">{{ $ratingLabel }}</span>
-                    <span class="text-[10px] text-white/50">[Rating]</span>
+        {{-- Card row + service tags — wrapped in the same max-w-7xl/padding as the heading above, so the
+             card's left edge lines up exactly with "Family-Friendly Dental Care" --}}
+        <div class="absolute inset-x-0 bottom-44 z-10 sm:bottom-28 lg:bottom-24">
+            <div class="mx-auto flex max-w-7xl items-end justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                <div class="min-w-0 flex-1 sm:flex-initial">
+                    <div class="flex flex-col gap-2.5">
+                    {{-- Swipeable card track: both cards visible side by side from sm up; one at a time,
+                         swipeable with a peek of the next, on mobile --}}
+                    <div x-ref="cardTrack"
+                         @scroll.debounce.150ms="cardIndex = $refs.cardTrack.children.length > 1 ? Math.round($refs.cardTrack.scrollLeft / ($refs.cardTrack.children[1].getBoundingClientRect().left - $refs.cardTrack.children[0].getBoundingClientRect().left)) : 0"
+                         class="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-visible sm:snap-none [&::-webkit-scrollbar]:hidden">
+                        @foreach ([
+                            ['img' => 'dental-examination-closeup', 'alt' => 'Professional dental examination', 'caption' => 'Restore natural healthy confident dental growth.'],
+                            ['img' => 'dentist-virtual-consultation', 'alt' => 'Online dental consultation', 'caption' => 'Book appointments and consult online with ease.'],
+                        ] as $card)
+                            <div class="w-[74vw] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl sm:w-52 lg:w-60">
+                                <img src="{{ asset('images/landing/' . $card['img'] . '.webp') }}" alt="{{ $card['alt'] }}"
+                                     class="h-24 w-full object-cover lg:h-28" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                                <div class="px-3 py-2.5">
+                                    <p class="text-[11px] leading-snug text-white/80">{{ $card['caption'] }}</p>
+                                    <div class="mt-1.5 flex items-center gap-1.5">
+                                        <svg class="h-3 w-3 shrink-0 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        <span class="text-xs font-bold text-white">{{ $ratingLabel }}</span>
+                                        <span class="text-[10px] text-white/50">[Rating]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Swipe dots (mobile only — sm+ already shows both cards at once) --}}
+                    <div class="flex gap-1.5 sm:hidden" role="tablist" aria-label="Featured highlights">
+                        <template x-for="i in totalCards" :key="i">
+                            <button type="button" role="tab" @click="scrollToCard(i - 1)" :aria-selected="(cardIndex === i - 1).toString()"
+                                    :class="cardIndex === i - 1 ? 'w-4 bg-white' : 'w-1.5 bg-white/40'"
+                                    class="h-1.5 rounded-full transition-all duration-300" :aria-label="'Show card ' + i"></button>
+                        </template>
+                    </div>
+                    </div>
+                </div>
+
+                {{-- Service tags (single row, lg only) --}}
+                <div class="hidden flex-nowrap items-center gap-2 pb-1 lg:flex" aria-hidden="true">
+                    @foreach (['Dental Checkup', 'Teeth Cleaning', 'Tooth Filling', 'Gum Treatment', 'Retainers'] as $service)
+                        <span class="whitespace-nowrap rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-md transition hover:bg-white/20">{{ $service }}</span>
+                    @endforeach
                 </div>
             </div>
-        </div>
-
-        {{-- Service tags (bottom-right, single row) --}}
-        <div class="absolute bottom-20 right-8 z-10 hidden flex-nowrap items-center justify-end gap-2 lg:bottom-24 lg:flex" aria-hidden="true">
-            @foreach (['Dental Checkup', 'Teeth Cleaning', 'Tooth Filling', 'Gum Treatment', 'Retainers'] as $service)
-                <span class="whitespace-nowrap rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-md transition hover:bg-white/20">{{ $service }}</span>
-            @endforeach
         </div>
     </section>
 
     {{-- HOW IT WORKS — 4-step process strip --}}
-    <section id="how-it-works" class="mx-auto max-w-7xl px-4 pb-20 pt-12 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-0">
+    <section id="how-it-works" class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-20 pt-12 sm:px-6 lg:px-8">
+        <div class="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-dc-mint/40 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-0">
             @foreach ([
                 ['icon' => '<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>', 'label' => 'Smile Assessment', 'desc' => 'Search and compare verified dental clinics near you'],
                 ['icon' => '<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"/></svg>', 'label' => 'Care Planning', 'desc' => 'Enroll securely and discuss your treatment plan'],
                 ['icon' => '<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>', 'label' => 'Treatment Process', 'desc' => 'Book your appointment and receive professional care'],
                 ['icon' => '<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>', 'label' => 'Dental Maintenance', 'desc' => 'Stay on track with follow-ups and oral care tips'],
             ] as $i => $step)
-                <div class="relative flex flex-col items-center px-3 py-6 text-center sm:px-6 {{ $i < 3 ? 'sm:border-r sm:border-dc-border/50' : '' }}">
+                <div data-reveal style="--reveal-delay: {{ $i * 90 }}ms" class="relative flex flex-col items-center rounded-2xl px-3 py-6 text-center transition hover:bg-white/60 sm:px-6 {{ $i < 3 ? 'sm:border-r sm:border-dc-border/50' : '' }}">
                     <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-dc-teal to-dc-teal-deep text-white shadow-[0_8px_24px_-8px_rgba(20,184,166,0.4)]">
                         {!! $step['icon'] !!}
                     </div>
@@ -132,9 +182,11 @@
     </section>
 
     {{-- ABOUT — Platform description + live stats --}}
-    <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            <div>
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+        <div class="pointer-events-none absolute right-0 top-1/4 h-80 w-80 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+            <div data-reveal>
                 <span class="dc-badge bg-dc-mint/80 text-dc-teal-deep">About Us</span>
                 <h2 class="mt-5 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
                     Find trusted dental clinics with
@@ -158,22 +210,22 @@
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div class="dc-card group p-6 transition hover:shadow-lg">
+                <div data-reveal style="--reveal-delay: 0ms" class="dc-card group p-6 transition hover:shadow-lg">
                     <p class="text-4xl font-extrabold text-dc-teal-dark">98<span class="text-xl">%</span></p>
                     <p class="mt-2 text-sm font-semibold text-dc-text">Satisfaction Rate</p>
                     <p class="mt-1 text-xs text-dc-text-secondary">From verified patient reviews</p>
                 </div>
-                <div class="dc-card group p-6 transition hover:shadow-lg">
+                <div data-reveal style="--reveal-delay: 90ms" class="dc-card group p-6 transition hover:shadow-lg">
                     <p class="text-4xl font-extrabold text-dc-teal-dark">2k<span class="text-xl">+</span></p>
                     <p class="mt-2 text-sm font-semibold text-dc-text">Smiles Transformed</p>
                     <p class="mt-1 text-xs text-dc-text-secondary">Patients helped so far</p>
                 </div>
-                <div class="dc-card group p-6 transition hover:shadow-lg">
+                <div data-reveal style="--reveal-delay: 180ms" class="dc-card group p-6 transition hover:shadow-lg">
                     <p class="text-4xl font-extrabold text-dc-teal-dark">{{ $ratingLabel }}<span class="text-xl">★</span></p>
                     <p class="mt-2 text-sm font-semibold text-dc-text">Customer Rating</p>
                     <p class="mt-1 text-xs text-dc-text-secondary">Average across all clinics</p>
                 </div>
-                <div class="dc-card group p-6 transition hover:shadow-lg">
+                <div data-reveal style="--reveal-delay: 270ms" class="dc-card group p-6 transition hover:shadow-lg">
                     <p class="text-4xl font-extrabold text-dc-teal-dark">{{ $clinicCount ?: '10' }}<span class="text-xl">+</span></p>
                     <p class="mt-2 text-sm font-semibold text-dc-text">Verified Clinics</p>
                     <p class="mt-1 text-xs text-dc-text-secondary">Across Tanzania</p>
@@ -184,7 +236,7 @@
 
     {{-- FEATURED TREATMENT — Image showcase --}}
     <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="text-center">
+        <div data-reveal class="text-center">
             <span class="dc-badge bg-dc-mint/80 text-dc-teal-deep">Featured Treatment</span>
             <h2 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">Modern care for a healthier smile</h2>
             <p class="mx-auto mt-3 max-w-2xl text-dc-text-secondary">
@@ -193,7 +245,7 @@
             </p>
         </div>
 
-        <div class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div data-reveal style="--reveal-delay: 120ms" class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="group relative col-span-1 overflow-hidden rounded-3xl lg:col-span-2">
                 <img src="{{ asset('images/landing/dental-examination-closeup.webp') }}"
                      alt="Professional dental examination with modern equipment"
@@ -238,9 +290,11 @@
     </section>
 
     {{-- WHY DENTAL CONNECT — Patient-focused features + testimonial --}}
-    <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
-            <div class="grid grid-cols-2 gap-4">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+        <div class="pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full bg-dc-mint/50 blur-3xl" aria-hidden="true"></div>
+
+        <div class="relative grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
+            <div data-reveal class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
                     <div class="group relative overflow-hidden rounded-3xl">
                         <img src="{{ asset('images/landing/dentist-patient-oceanview.webp') }}"
@@ -266,7 +320,7 @@
                 </div>
             </div>
 
-            <div>
+            <div data-reveal style="--reveal-delay: 120ms">
                 <span class="dc-badge bg-dc-mint/80 text-dc-teal-deep">Why Dental Connect?</span>
                 <h2 class="mt-5 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
                     Built for how dental care actually works.
@@ -311,19 +365,21 @@
     </section>
 
     {{-- SERVICES — Feature cards --}}
-    <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="text-center">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+        <div class="pointer-events-none absolute right-0 bottom-0 h-72 w-72 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
+
+        <div data-reveal class="relative text-center">
             <span class="dc-badge bg-dc-mint/80 text-dc-teal-deep">Our Services</span>
             <h2 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">Complete Oral Care Services</h2>
         </div>
-        <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="relative mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ([
                 ['title' => 'General Checkup', 'desc' => 'Comprehensive dental examinations to assess your overall oral health and catch issues early.', 'icon' => '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>'],
                 ['title' => 'Teeth Cleaning', 'desc' => 'Professional scaling and polishing to remove plaque and tartar for a brighter, healthier smile.', 'icon' => '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>'],
                 ['title' => 'Tooth Filling', 'desc' => 'Durable, natural-looking restorations that repair cavities and protect your teeth from further decay.', 'icon' => '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>'],
                 ['title' => 'Orthodontics', 'desc' => 'Braces, aligners and specialised treatments to straighten your teeth and correct your bite.', 'icon' => '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>'],
-            ] as $service)
-                <div class="dc-card group p-6 transition hover:shadow-lg">
+            ] as $i => $service)
+                <div data-reveal style="--reveal-delay: {{ $i * 90 }}ms" class="dc-card group p-6 transition hover:shadow-lg">
                     <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-dc-mint/80 text-dc-teal-deep transition group-hover:bg-gradient-to-br group-hover:from-dc-teal group-hover:to-dc-teal-deep group-hover:text-white">
                         {!! $service['icon'] !!}
                     </div>
@@ -340,7 +396,7 @@
 
     {{-- TEAM / CLINIC SHOWCASE — Full width image banner --}}
     <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="group relative overflow-hidden rounded-3xl">
+        <div data-reveal class="group relative overflow-hidden rounded-3xl">
             <img src="{{ asset('images/landing/dental-team-portrait.webp') }}"
                  alt="Professional dental team at a Dental Connect verified clinic"
                  class="h-64 w-full object-cover object-top transition duration-700 motion-safe:group-hover:scale-105 sm:h-80 lg:h-96"
@@ -364,8 +420,10 @@
     </section>
 
     {{-- ORAL CARE INSIGHTS — Blog-style cards --}}
-    <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+        <div class="pointer-events-none absolute left-1/3 top-0 h-64 w-64 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
+
+        <div data-reveal class="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
                 <span class="dc-badge bg-dc-mint/80 text-dc-teal-deep">Our Insights</span>
                 <h2 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
@@ -378,13 +436,13 @@
             </a>
         </div>
 
-        <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="relative mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ([
                 ['img' => 'dental-examination-closeup', 'cat' => 'Dental Health', 'title' => 'Professional cleaning vs. regular brushing', 'desc' => 'Daily brushing removes plaque, but professional cleaning reaches what a toothbrush cannot. Most dentists recommend a visit every six months.', 'author' => 'Sarah Johnson', 'time' => '10 Min read', 'date' => 'March 12, 2026'],
                 ['img' => 'dentist-patient-oceanview', 'cat' => 'Dental Health', 'title' => 'Signs it\'s time to visit your dentist', 'desc' => 'Sensitivity, bleeding gums or a lingering toothache are your cue to book a check-up rather than waiting it out.', 'author' => 'Nataly Birch', 'time' => '10 Min read', 'date' => 'March 12, 2026'],
                 ['img' => 'dental-supplies-equipment', 'cat' => 'Dental Health', 'title' => 'Choosing the right clinic for your dental needs', 'desc' => 'Look for a verified profile, clear service pricing and a specialty match for what you actually need.', 'author' => 'Cody Fisher', 'time' => '6 Min read', 'date' => 'March 12, 2026'],
-            ] as $article)
-                <article class="dc-card group overflow-hidden transition hover:shadow-lg">
+            ] as $i => $article)
+                <article data-reveal style="--reveal-delay: {{ $i * 100 }}ms" class="dc-card group overflow-hidden transition hover:shadow-lg">
                     <div class="relative overflow-hidden">
                         <img src="{{ asset('images/landing/' . $article['img'] . '.webp') }}"
                              alt="{{ $article['title'] }}"
@@ -413,7 +471,7 @@
 
     {{-- NEWSLETTER + CTA --}}
     <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-dc-teal via-dc-teal-deep to-dc-teal-dark px-6 py-12 text-white sm:px-12 sm:py-16">
+        <div data-reveal class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-dc-teal via-dc-teal-deep to-dc-teal-dark px-6 py-12 text-white sm:px-12 sm:py-16">
             <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5 blur-2xl" aria-hidden="true"></div>
             <div class="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-white/5 blur-2xl" aria-hidden="true"></div>
 
