@@ -10,37 +10,16 @@
 
     <div
         x-data="{
+            ...dcDatePicker('{{ $today }}'),
             step: 1,
             serviceId: null,
             serviceName: '',
             servicePrice: null,
             dentistId: null,
             dentistName: '',
-            date: null,
-            time: null,
-            viewMonth: new Date().getMonth(),
-            viewYear: new Date().getFullYear(),
             note: '',
             chooseService(id, name, price) { this.serviceId = id; this.serviceName = name; this.servicePrice = price; },
             chooseDentist(id, name) { this.dentistId = (this.dentistId === id ? null : id); this.dentistName = name; },
-            monthLabel() { return new Date(this.viewYear, this.viewMonth, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }); },
-            prevMonth() { this.viewMonth--; if (this.viewMonth < 0) { this.viewMonth = 11; this.viewYear--; } },
-            nextMonth() { this.viewMonth++; if (this.viewMonth > 11) { this.viewMonth = 0; this.viewYear++; } },
-            daysGrid() {
-                const first = new Date(this.viewYear, this.viewMonth, 1);
-                const startOffset = (first.getDay() + 6) % 7; // Monday-first
-                const daysInMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
-                const cells = [];
-                for (let i = 0; i < startOffset; i++) cells.push(null);
-                for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-                return cells;
-            },
-            isoFor(day) {
-                const m = String(this.viewMonth + 1).padStart(2, '0');
-                const d = String(day).padStart(2, '0');
-                return `${this.viewYear}-${m}-${d}`;
-            },
-            isPast(day) { return this.isoFor(day) < '{{ $today }}'; },
         }"
     >
         {{-- Step indicator --}}
@@ -98,37 +77,7 @@
 
         {{-- Step 2: Date & Time --}}
         <div x-show="step === 2" class="mt-5" x-cloak>
-            <h2 class="font-bold">Choose date</h2>
-            <div class="dc-card mt-3 p-4">
-                <div class="flex items-center justify-between">
-                    <button type="button" @click="prevMonth()" class="h-7 w-7 text-dc-text-secondary">&lsaquo;</button>
-                    <p class="text-sm font-bold" x-text="monthLabel()"></p>
-                    <button type="button" @click="nextMonth()" class="h-7 w-7 text-dc-text-secondary">&rsaquo;</button>
-                </div>
-                <div class="mt-3 grid grid-cols-7 gap-1 text-center text-xs text-dc-text-secondary">
-                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                </div>
-                <div class="mt-1 grid grid-cols-7 gap-1">
-                    <template x-for="(day, i) in daysGrid()" :key="i">
-                        <button
-                            type="button"
-                            x-show="day !== null"
-                            x-text="day"
-                            :disabled="day && isPast(day)"
-                            @click="date = isoFor(day)"
-                            class="aspect-square rounded-full text-sm"
-                            :class="day && date === isoFor(day) ? 'bg-dc-teal text-white font-bold' : (day && isPast(day) ? 'text-dc-border' : 'text-dc-text hover:bg-dc-mint-light')"
-                        ></button>
-                    </template>
-                </div>
-            </div>
-
-            <h2 class="mt-5 font-bold">Available time</h2>
-            <div class="mt-3 flex flex-wrap gap-2">
-                @foreach (['09:00', '10:30', '11:30', '13:00', '14:30', '16:00'] as $slot)
-                    <button type="button" @click="time = '{{ $slot }}'" class="dc-pill-tab" :class="time === '{{ $slot }}' ? 'dc-pill-tab-active' : 'dc-pill-tab-inactive'">{{ $slot }}</button>
-                @endforeach
-            </div>
+            @include('patient.appointments._date-time-picker')
 
             <div class="mt-6 flex gap-3">
                 <button type="button" @click="step = 1" class="dc-btn-secondary flex-1">Back</button>

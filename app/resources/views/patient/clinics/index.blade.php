@@ -27,13 +27,17 @@
         </div>
     @endif
 
-    <div class="mt-4 space-y-3">
+    <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
         @forelse ($clinics as $clinic)
-            <a href="{{ route('clinics.show', $clinic) }}" class="dc-card flex items-center gap-3 p-4">
+            {{-- Stretched-link pattern: the <a> is an inset overlay so it never nests inside/around
+                 the favorite <button> (invalid HTML that also let Livewire's capture-phase
+                 wire:navigate handler fire before Alpine's own @click.stop could run). --}}
+            <div class="dc-card relative flex items-center gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-md">
+                <a href="{{ route('clinics.show', $clinic) }}" wire:navigate class="absolute inset-0 z-0" aria-label="{{ $clinic->name }}"></a>
                 <span class="dc-avatar-square h-12 w-12 shrink-0 text-lg">{{ strtoupper(substr($clinic->name, 0, 1)) }}</span>
-                <div class="min-w-0 flex-1">
-                    <p class="text-sm font-bold">{{ $clinic->name }}</p>
-                    <p class="mt-0.5 truncate text-xs text-dc-text-secondary">
+                <div class="pointer-events-none min-w-0 flex-1">
+                    <p class="pr-6 text-sm font-bold">{{ $clinic->name }}</p>
+                    <p class="mt-0.5 truncate pr-6 text-xs text-dc-text-secondary">
                         {{ $clinic->primaryLocation?->area ?? $clinic->primaryLocation?->city ?? 'Dar es Salaam' }}
                         @if ($clinic->services->isNotEmpty())
                             &middot; {{ $clinic->services->take(2)->pluck('name')->implode(' · ') }}
@@ -43,10 +47,18 @@
                         <p class="mt-1 text-xs text-amber-500">★ {{ number_format($clinic->reviews_avg_rating, 1) }} <span class="text-dc-text-secondary">({{ $clinic->reviews_count }})</span></p>
                     @endif
                 </div>
-                <span class="dc-badge shrink-0 bg-dc-mint text-dc-teal-deep">Verified</span>
-            </a>
+                <span class="dc-badge pointer-events-none shrink-0 bg-dc-mint text-dc-teal-deep">Verified</span>
+
+                <button type="button" x-data="{ saved: isFavoriteClinic('{{ $clinic->public_id }}') }"
+                        @click="saved = toggleFavoriteClinic('{{ $clinic->public_id }}')"
+                        class="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/80 shadow-sm transition"
+                        :class="saved ? 'text-dc-danger' : 'text-dc-text-secondary hover:text-dc-danger'"
+                        aria-label="Save clinic">
+                    <svg width="15" height="15" viewBox="0 0 24 24" :fill="saved ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8"><path d="M12 20.5s-7.5-4.6-9.7-9.1C.7 8 2.3 4.7 5.6 4.1c2-.4 3.9.5 5 2.1 1.1-1.6 3-2.5 5-2.1 3.3.6 4.9 3.9 3.3 7.3-2.2 4.5-9.7 9.1-9.7 9.1z" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
         @empty
-            <div class="dc-card p-6 text-center text-sm text-dc-text-secondary">No verified clinics match your search yet.</div>
+            <div class="dc-card p-6 text-center text-sm text-dc-text-secondary lg:col-span-2">No verified clinics match your search yet.</div>
         @endforelse
     </div>
 

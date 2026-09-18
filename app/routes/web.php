@@ -84,7 +84,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')-
 |--------------------------------------------------------------------------
 */
 Route::prefix('app')->as('patient.')->middleware(['auth', 'role:patient'])->group(function () {
-    Route::get('/dashboard', [PatientDashboardController::class, 'index'])->name('dashboard');
+    Route::livewire('/dashboard', 'patient.dashboard')->name('dashboard');
     Route::get('/switch-clinic', [PatientDashboardController::class, 'switchClinic'])->name('clinics.switch');
     Route::post('/switch-clinic', [PatientDashboardController::class, 'selectClinic'])->name('clinics.switch.store');
 

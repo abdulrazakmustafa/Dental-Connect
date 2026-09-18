@@ -10,15 +10,17 @@
     ];
 @endphp
 <x-layouts.patient-app title="My Appointments" active="appointments">
-    <div class="flex gap-2">
+    <div class="flex gap-2 overflow-x-auto pb-1">
         @foreach (['upcoming' => 'Upcoming', 'completed' => 'Completed', 'cancelled' => 'Cancelled'] as $value => $label)
-            <a href="{{ route('patient.appointments.index', ['tab' => $value]) }}" class="dc-pill-tab {{ $tab === $value ? 'dc-pill-tab-active' : 'dc-pill-tab-inactive' }}">{{ $label }}</a>
+            <a href="{{ route('patient.appointments.index', ['tab' => $value]) }}" wire:navigate
+               class="dc-pill-tab shrink-0 {{ $tab === $value ? 'dc-pill-tab-active' : 'dc-pill-tab-inactive' }}">{{ $label }}</a>
         @endforeach
     </div>
 
-    <div class="mt-4 space-y-3">
+    <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
         @forelse ($appointments as $appointment)
-            <a href="{{ route('patient.appointments.show', $appointment) }}" class="dc-card flex items-center gap-3 p-4">
+            <a href="{{ route('patient.appointments.show', $appointment) }}" wire:navigate
+               class="dc-card flex items-center gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-md">
                 <div class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl bg-dc-mint-light text-dc-teal-deep">
                     <span class="text-base font-extrabold leading-none">{{ $appointment->preferred_date->format('d') }}</span>
                     <span class="text-[10px] font-semibold uppercase leading-none">{{ $appointment->preferred_date->format('M') }}</span>
@@ -30,10 +32,10 @@
                 <span class="dc-badge shrink-0 self-start {{ $statusStyle[$appointment->status] ?? 'bg-gray-100 text-dc-text-secondary' }}">{{ ucfirst(str_replace('_', ' ', $appointment->status)) }}</span>
             </a>
         @empty
-            <div class="dc-card p-6 text-center text-sm text-dc-text-secondary">No appointments here yet.</div>
+            <div class="dc-card p-6 text-center text-sm text-dc-text-secondary lg:col-span-2">No appointments here yet.</div>
         @endforelse
 
-        <a href="{{ route('clinics.index') }}" class="dc-card flex items-center gap-3 p-4">
+        <a href="{{ route('clinics.index') }}" wire:navigate class="dc-card flex items-center gap-3 p-4 lg:col-span-2">
             <span class="dc-avatar h-9 w-9 text-sm">C</span>
             <div>
                 <p class="text-sm font-bold">Want to visit another clinic?</p>
