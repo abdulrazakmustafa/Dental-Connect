@@ -22,7 +22,6 @@ use App\Modules\Marketplace\Http\Controllers\MarketplaceController;
 use App\Modules\Marketplace\Http\Controllers\RfqController;
 use App\Modules\Notification\Http\Controllers\PatientNotificationController;
 use App\Modules\Patient\Http\Controllers\ClinicEnrollmentController;
-use App\Modules\Patient\Http\Controllers\PatientDashboardController;
 use App\Modules\Patient\Http\Controllers\PatientProfileController;
 use App\Modules\Supplier\Http\Controllers\SupplierDashboardController;
 use App\Modules\Supplier\Http\Controllers\SupplierOnboardingController;
@@ -85,8 +84,6 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')-
 */
 Route::prefix('app')->as('patient.')->middleware(['auth', 'role:patient'])->group(function () {
     Route::livewire('/dashboard', 'patient.dashboard')->name('dashboard');
-    Route::get('/switch-clinic', [PatientDashboardController::class, 'switchClinic'])->name('clinics.switch');
-    Route::post('/switch-clinic', [PatientDashboardController::class, 'selectClinic'])->name('clinics.switch.store');
 
     Route::get('/appointments', [AppointmentController::class, 'patientIndex'])->name('appointments.index');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'patientShow'])->name('appointments.show');
