@@ -148,6 +148,11 @@
                     @endif
                 </div>
 
+                <a href="{{ route('clinics.index') }}" wire:navigate aria-label="Search clinics"
+                   class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/70 text-dc-text-secondary shadow-sm ring-1 ring-dc-border transition hover:text-dc-teal-deep">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                </a>
+
                 {{-- Notification bell popover --}}
                 <div class="relative shrink-0" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                     <button @click="open = !open" type="button" aria-label="Notifications"
@@ -156,9 +161,13 @@
                         <livewire:patient.unread-badge :poll="true" :key="'badge-bell'" />
                     </button>
 
+                    {{-- Patient pages always sit on a plain light background (no dark hero photo
+                         behind, unlike the marketing header), so the marketing site's bg-white/40
+                         glass reads as see-through here — the same "glass popover" pattern, tuned
+                         to a fully solid bg-white so nothing underneath ever bleeds through. --}}
                     <div x-show="open" x-transition.origin.top.right
                          x-cloak
-                         class="absolute right-0 z-40 mt-3 w-80 max-w-[85vw] overflow-hidden rounded-3xl border border-white/30 bg-white/40 shadow-2xl shadow-dc-teal-deep/10 backdrop-blur-2xl">
+                         class="absolute right-0 z-40 mt-5 w-80 max-w-[85vw] overflow-hidden rounded-3xl border border-dc-border bg-white shadow-2xl shadow-dc-teal-deep/10">
                         {{-- Not lazy: lazy-loading would add its own extra AJAX round-trip on
                              every single page load/navigation for content that's hidden by
                              default anyway — a plain eager render costs nothing extra since its
@@ -176,7 +185,7 @@
 
                     <div x-show="open" x-transition.origin.top.right
                          x-cloak
-                         class="absolute right-0 z-40 mt-3 w-64 overflow-hidden rounded-3xl border border-white/30 bg-white/40 p-2 shadow-2xl shadow-dc-teal-deep/10 backdrop-blur-2xl">
+                         class="absolute right-0 z-40 mt-5 w-64 overflow-hidden rounded-3xl border border-dc-border bg-white p-2 shadow-2xl shadow-dc-teal-deep/10">
                         <div class="rounded-2xl px-3 py-2.5">
                             <p class="truncate text-sm font-bold">{{ $user?->name }}</p>
                             <p class="truncate text-xs text-dc-text-secondary">{{ $user?->email }}</p>
