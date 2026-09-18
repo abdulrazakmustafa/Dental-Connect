@@ -19,12 +19,20 @@
             @scroll.window="scrolled = window.scrollY > 40"
             :class="scrolled ? 'bg-white/85 backdrop-blur-xl border-b border-dc-border/40' : 'bg-transparent border-b border-white/15'"
             class="fixed inset-x-0 top-0 z-50 transition-colors duration-300">
-            <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-                <a href="{{ route('home') }}" class="flex items-center">
+            <div class="mx-auto grid max-w-7xl grid-cols-3 items-center px-4 py-3 sm:px-6 lg:flex lg:justify-between lg:px-8">
+                {{-- Mobile-only icon row: notifications (left) / login (right), logo centered between them --}}
+                <x-notification-menu :transparent="true" align="left" class="justify-self-start lg:hidden" />
+
+                <a href="{{ route('home') }}"
+                   @click="if (window.location.pathname === '/') { $event.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }"
+                   class="flex items-center justify-center gap-2.5 justify-self-center lg:justify-self-auto">
                     {{-- Full readable wordmark lockup at every breakpoint, swapped white/color as the header crosses from transparent to solid --}}
                     <img :src="scrolled ? '{{ asset('images/logo/dental-connect-full-color.png') }}' : '{{ asset('images/logo/dental-connect-full-white.png') }}'"
-                         alt="Dental Connect" class="h-7 w-auto shrink-0 object-contain sm:h-8">
+                         alt="Dental Connect" class="h-8 w-auto shrink-0 object-contain sm:h-9">
+                    <span :class="scrolled ? 'border-dc-border text-dc-text-secondary' : 'border-white/30 text-white/80'" class="hidden border-l pl-2.5 text-xs leading-tight transition-colors duration-300 lg:block">Connected dental care for Tanzania</span>
                 </a>
+
+                <x-account-menu :transparent="true" />
 
                 <nav :class="scrolled ? 'text-dc-text' : 'text-white/90'" class="hidden items-center gap-5 text-sm font-medium transition-colors duration-300 lg:flex lg:gap-7">
                     <a href="{{ route('clinics.index') }}" class="transition hover:opacity-70">Find Clinics</a>
@@ -35,15 +43,24 @@
                 </nav>
 
                 <div class="hidden items-center gap-3 lg:flex">
-                    <a href="{{ route('login') }}" class="inline-flex rounded-full border border-dc-border bg-white px-5 py-2 text-sm font-semibold text-dc-text transition hover:bg-dc-mint-light">Log in</a>
-                    <a href="{{ route('register') }}" class="dc-btn-primary !px-5 !py-2.5">Get Started</a>
+                    <x-notification-menu :transparent="true" />
+                    <x-login-menu :transparent="true" />
+                    <x-get-started-menu />
                 </div>
             </div>
         </header>
     @else
         <header class="sticky top-0 z-40 border-b border-dc-border/40 bg-white/70 backdrop-blur-xl">
-            <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-                <a href="{{ route('home') }}"><x-dc-logo :size="36" tagline="Connected dental care for Tanzania" /></a>
+            <div class="mx-auto grid max-w-7xl grid-cols-3 items-center px-4 py-3 sm:px-6 lg:flex lg:justify-between lg:px-8">
+                {{-- Mobile-only icon row: notifications (left) / login (right), logo centered between them --}}
+                <x-notification-menu align="left" class="justify-self-start lg:hidden" />
+
+                <a href="{{ route('home') }}"
+                   x-data
+                   @click="if (window.location.pathname === '/') { $event.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }"
+                   class="flex items-center justify-center justify-self-center lg:justify-self-auto"><x-dc-logo :size="40" tagline="Connected dental care for Tanzania" /></a>
+
+                <x-account-menu />
 
                 <nav class="hidden items-center gap-7 text-sm font-medium text-dc-text lg:flex">
                     <a href="{{ route('clinics.index') }}" class="transition hover:text-dc-teal-deep">Find Clinics</a>
@@ -54,8 +71,9 @@
                 </nav>
 
                 <div class="hidden items-center gap-3 lg:flex">
-                    <a href="{{ route('login') }}" class="inline-flex rounded-full border border-dc-border bg-white px-5 py-2 text-sm font-semibold text-dc-text transition hover:bg-dc-mint-light">Log in</a>
-                    <a href="{{ route('register') }}" class="dc-btn-primary !px-5 !py-2.5">Get Started</a>
+                    <x-notification-menu />
+                    <x-login-menu />
+                    <x-get-started-menu />
                 </div>
             </div>
         </header>
@@ -126,74 +144,7 @@
     </footer>
 
     {{-- MOBILE APP-STYLE FOOTER NAVIGATION --}}
-    @php
-        $currentRoute = Route::currentRouteName();
-    @endphp
-    <div x-data="{ mobileMore: false }">
-        <nav class="fixed inset-x-0 bottom-0 z-50 lg:hidden" aria-label="Mobile navigation">
-            <div class="relative mx-3 mb-3">
-                <div class="relative flex items-end justify-around rounded-[1.75rem] border border-white/40 bg-gradient-to-r from-dc-teal/90 via-dc-teal-deep/90 to-dc-teal-dark/85 px-2 pb-2.5 pt-2.5 shadow-[0_-4px_32px_-8px_rgba(15,118,110,0.35)] backdrop-blur-xl">
-
-                    <a href="{{ route('home') }}" class="relative flex flex-col items-center gap-0.5 px-3 py-1 transition {{ $currentRoute === 'home' ? 'text-white' : 'text-white/60 hover:text-white/80' }}" {{ $currentRoute === 'home' ? 'aria-current=page' : '' }}>
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
-                        <span class="text-[10px] font-medium">Home</span>
-                        @if ($currentRoute === 'home')
-                            <span class="absolute -bottom-0.5 h-1 w-5 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.6)]"></span>
-                        @endif
-                    </a>
-
-                    <a href="{{ route('clinics.index') }}" class="relative flex flex-col items-center gap-0.5 px-3 py-1 transition {{ $currentRoute === 'clinics.index' ? 'text-white' : 'text-white/60 hover:text-white/80' }}" {{ $currentRoute === 'clinics.index' ? 'aria-current=page' : '' }}>
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
-                        <span class="text-[10px] font-medium">Clinics</span>
-                        @if ($currentRoute === 'clinics.index')
-                            <span class="absolute -bottom-0.5 h-1 w-5 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.6)]"></span>
-                        @endif
-                    </a>
-
-                    {{-- Center floating action button --}}
-                    <div class="relative -mt-6 flex flex-col items-center">
-                        <a href="{{ route('register') }}"
-                           class="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(15,118,110,0.4)] ring-4 ring-dc-teal/20 transition hover:scale-105 active:scale-95">
-                            <svg class="h-6 w-6 text-dc-teal-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                        </a>
-                        <span class="mt-0.5 text-[10px] font-medium text-white/60">Get Started</span>
-                    </div>
-
-                    <button type="button" @click="mobileMore = true" class="flex flex-col items-center gap-0.5 px-3 py-1 text-white/60 transition hover:text-white/80">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-                        <span class="text-[10px] font-medium">More</span>
-                    </button>
-
-                    <a href="{{ route('login') }}" class="relative flex flex-col items-center gap-0.5 px-3 py-1 transition {{ $currentRoute === 'login' ? 'text-white' : 'text-white/60 hover:text-white/80' }}">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-                        <span class="text-[10px] font-medium">Login</span>
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-        {{-- "More" bottom sheet — remaining navigation, reached without a header hamburger --}}
-        <div x-show="mobileMore" x-cloak class="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="More navigation">
-            <div class="absolute inset-0 bg-dc-teal-dark/60 backdrop-blur-sm"
-                 x-show="mobileMore" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                 @click="mobileMore = false"></div>
-            <div class="absolute inset-x-0 bottom-0 rounded-t-3xl bg-white p-5 pb-8 shadow-2xl"
-                 x-show="mobileMore"
-                 x-transition:enter="transition ease-out duration-250" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
-                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full">
-                <div class="mx-auto mb-5 h-1.5 w-12 rounded-full bg-dc-border"></div>
-                <p class="mb-3 text-xs font-bold uppercase tracking-wider text-dc-text-secondary">More</p>
-                <nav class="grid grid-cols-2 gap-3 text-sm font-semibold text-dc-text">
-                    <a href="{{ route('home') }}#how-it-works" @click="mobileMore = false" class="dc-card flex items-center gap-2 p-4 transition hover:shadow-md">How It Works</a>
-                    <a href="{{ route('for-clinics') }}" @click="mobileMore = false" class="dc-card flex items-center gap-2 p-4 transition hover:shadow-md">For Clinics</a>
-                    <a href="{{ route('for-suppliers') }}" @click="mobileMore = false" class="dc-card flex items-center gap-2 p-4 transition hover:shadow-md">For Suppliers</a>
-                    <a href="{{ route('about') }}" @click="mobileMore = false" class="dc-card flex items-center gap-2 p-4 transition hover:shadow-md">About Us</a>
-                    <a href="{{ route('contact') }}" @click="mobileMore = false" class="dc-card col-span-2 flex items-center justify-center gap-2 p-4 transition hover:shadow-md">Contact Us</a>
-                </nav>
-            </div>
-        </div>
-    </div>
+    <x-mobile-nav />
 
     @livewireScripts
 </body>

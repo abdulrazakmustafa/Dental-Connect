@@ -1,3 +1,12 @@
+// The @view-transition CSS rule (app.css) makes supporting browsers crossfade between full
+// page loads instead of flashing to blank white. When a navigation interrupts an in-flight
+// transition, the browser rejects its promise with a benign AbortError — swallow just that.
+window.addEventListener('unhandledrejection', (event) => {
+    if (event.reason && event.reason.name === 'AbortError') {
+        event.preventDefault();
+    }
+});
+
 // Scroll-reveal: fades/slides sections and cards into view as the user
 // scrolls, so the page feels alive rather than a static block of content.
 // Progressive enhancement only — see the `.js-reveal` gate in app.css,

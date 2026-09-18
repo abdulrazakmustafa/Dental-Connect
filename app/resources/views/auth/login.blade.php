@@ -36,10 +36,13 @@
         </form>
     </div>
 
-    <p class="mt-5 text-center text-sm text-dc-text-secondary">
-        New to Dental Connect?
-        <a class="font-semibold text-dc-teal-deep" href="{{ route('register') }}">Create account</a>
-    </p>
+    <div class="dc-card mt-5 flex items-center justify-between gap-3 p-4">
+        <div>
+            <p class="text-sm font-bold">New to Dental Connect?</p>
+            <p class="mt-0.5 text-xs text-dc-text-secondary">Create a free account to get started.</p>
+        </div>
+        <a href="{{ route('register') }}" class="dc-btn-primary shrink-0 !px-4 !py-2 text-sm">Get Started</a>
+    </div>
 
     <div class="dc-card mt-6 flex items-start gap-3 p-4">
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-dc-mint text-dc-teal-deep">

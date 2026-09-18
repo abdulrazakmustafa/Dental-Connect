@@ -3,6 +3,13 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/* Smooth cross-document navigation between pages (progressive enhancement — Laravel is a
+   traditional MPA here, so full page loads are unavoidable; this asks supporting browsers
+   to crossfade instead of flashing to blank white while the next page loads). */
+@view-transition {
+    navigation: auto;
+}
+
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

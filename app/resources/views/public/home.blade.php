@@ -2,6 +2,93 @@
     $hasHeroPhoto = file_exists(public_path('images/hero/desktop.jpg'));
     $ratingLabel = $avgRating ? number_format($avgRating, 1) : '4.9';
     $clinicCount = $verifiedClinics ?: 0;
+
+    $testimonials = [
+        [
+            'quote' => 'Our mission is simple: make it easy for every family in Tanzania to find quality dental care they can trust.',
+            'name' => 'Dental Connect Team',
+            'meta' => 'Dar es Salaam, Tanzania',
+            'avatar' => 'dentist-tablet-clinic',
+        ],
+        [
+            'quote' => 'I booked my daughter\'s appointment in minutes and could see the clinic\'s reviews before we even walked in. It made choosing so much easier.',
+            'name' => 'Amina R.',
+            'meta' => 'Patient, Dar es Salaam',
+            'avatar' => 'woman-brushing-teeth',
+        ],
+        [
+            'quote' => 'Since joining Dental Connect, our clinic gets new patients every week and appointment scheduling no longer means a phone glued to my ear.',
+            'name' => 'Dr. Juma Mkapa',
+            'meta' => 'Smile Dental Clinic, Arusha',
+            'avatar' => 'dental-team-portrait',
+        ],
+        [
+            'quote' => 'Listing our catalogue on Dental Connect connected us directly with verified clinics — no more cold calls, just real quotation requests.',
+            'name' => 'Grace Mushi',
+            'meta' => 'Supplier Partner, Mwanza',
+            'avatar' => 'dental-supplies-equipment',
+        ],
+    ];
+
+    $shieldIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>';
+    $tagIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>';
+    $starIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>';
+    $calendarIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>';
+    $chartIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>';
+    $truckIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>';
+    $boxIcon = '<path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375C2.754 3.75 2.25 4.254 2.25 4.875v1.5c0 .621.504 1.125 1.125 1.125z"/>';
+
+    $heroSlides = [
+        [
+            'line1' => 'Family-Friendly',
+            'line2' => 'Dental Care',
+            'desc' => 'A new platform connecting you with verified, licensed dental clinics across Tanzania. Compare real patient experiences and choose with confidence.',
+            'chips' => [
+                ['label' => 'Verified Clinics', 'icon' => $shieldIcon],
+                ['label' => 'Transparent Pricing', 'icon' => $tagIcon],
+                ['label' => 'Trusted Reviews', 'icon' => $starIcon],
+            ],
+        ],
+        [
+            'line1' => 'Find Trusted Care,',
+            'line2' => 'Anytime You Need It',
+            'desc' => 'Browse verified clinic profiles, compare real reviews and book your appointment in minutes — no phone calls, no waiting rooms.',
+            'chips' => [
+                ['label' => 'Easy Booking', 'icon' => $calendarIcon],
+                ['label' => 'Real Reviews', 'icon' => $starIcon],
+                ['label' => 'Verified Clinics', 'icon' => $shieldIcon],
+            ],
+        ],
+        [
+            'line1' => 'Grow Your Clinic',
+            'line2' => 'With Verified Patients',
+            'desc' => 'List your clinic on Dental Connect to reach new patients, manage appointments online and build a trusted, review-backed reputation.',
+            'chips' => [
+                ['label' => 'More Patients', 'icon' => $chartIcon],
+                ['label' => 'Manage Bookings', 'icon' => $calendarIcon],
+                ['label' => 'Verified Profile', 'icon' => $shieldIcon],
+            ],
+        ],
+        [
+            'line1' => 'Reach Verified Clinics,',
+            'line2' => 'Faster Than Ever',
+            'desc' => 'Suppliers can list their catalogue, respond to quotation requests and grow direct relationships with dental clinics across Tanzania.',
+            'chips' => [
+                ['label' => 'List Your Catalogue', 'icon' => $boxIcon],
+                ['label' => 'Reach Clinics Directly', 'icon' => $truckIcon],
+                ['label' => 'Grow B2B Sales', 'icon' => $chartIcon],
+            ],
+        ],
+    ];
+
+    // Each slide's image + where its actual subject sits, so the sm+ "shift toward the clear
+    // side" only ever reveals more subject — never more of a blank/empty background.
+    $heroBackgrounds = [
+        ['img' => null, 'position' => '85% center'], // slide 0 uses the dedicated responsive hero/ photo set below
+        ['img' => 'dentist-patient-oceanview', 'position' => '75% center'],
+        ['img' => 'dental-team-portrait', 'position' => '15% center'],
+        ['img' => 'dental-supplies-equipment', 'position' => 'center center'],
+    ];
 @endphp
 <x-layouts.public :title="'Dental Connect | Family-Friendly Dental Care'" :transparent-header="true">
 
@@ -18,25 +105,45 @@
                 const trackRect = track.getBoundingClientRect();
                 const targetRect = target.getBoundingClientRect();
                 track.scrollTo({ left: track.scrollLeft + (targetRect.left - trackRect.left), behavior: 'smooth' });
+            },
+            heroIndex: 0,
+            totalSlides: {{ count($heroSlides) }},
+            heroTimer: null,
+            startHeroTimer() {
+                clearInterval(this.heroTimer);
+                this.heroTimer = setInterval(() => { this.heroIndex = (this.heroIndex + 1) % this.totalSlides; }, 6000);
+            },
+            goToSlide(i) {
+                this.heroIndex = ((i % this.totalSlides) + this.totalSlides) % this.totalSlides;
+                this.startHeroTimer();
             }
         }"
+        x-init="startHeroTimer()"
         class="relative min-h-screen overflow-hidden bg-dc-teal-dark">
-        {{-- Background image --}}
+        {{-- Background image — 4 auto-rotating slides (general / patient / clinic / supplier), crossfading --}}
         <div class="absolute inset-0">
-            @if ($hasHeroPhoto)
-                <picture>
-                    <source type="image/webp" media="(max-width: 639px)" srcset="{{ asset('images/hero/mobile.webp') }}">
-                    <source type="image/webp" media="(max-width: 1023px)" srcset="{{ asset('images/hero/tablet.webp') }}">
-                    <source type="image/webp" srcset="{{ asset('images/hero/desktop.webp') }}">
-                    <source media="(max-width: 639px)" srcset="{{ asset('images/hero/mobile.jpg') }}">
-                    <source media="(max-width: 1023px)" srcset="{{ asset('images/hero/tablet.jpg') }}">
-                    <img src="{{ asset('images/hero/desktop.jpg') }}" alt=""
-                         class="h-full w-full object-cover"
-                         loading="eager" fetchpriority="high" width="1774" height="887">
-                </picture>
-            @else
-                <div class="h-full w-full bg-gradient-to-br from-dc-teal-dark via-dc-teal-deep to-dc-teal"></div>
-            @endif
+            @foreach ($heroSlides as $i => $slide)
+                <div class="absolute inset-0 transition-opacity duration-1000" style="opacity: {{ $i === 0 ? 1 : 0 }};" :style="`opacity: ${heroIndex === {{ $i }} ? 1 : 0}`">
+                    @if ($i === 0 && $hasHeroPhoto)
+                        <picture>
+                            <source type="image/webp" media="(max-width: 639px)" srcset="{{ asset('images/hero/mobile.webp') }}">
+                            <source type="image/webp" media="(max-width: 1023px)" srcset="{{ asset('images/hero/tablet.webp') }}">
+                            <source type="image/webp" srcset="{{ asset('images/hero/desktop.webp') }}">
+                            <source media="(max-width: 639px)" srcset="{{ asset('images/hero/mobile.jpg') }}">
+                            <source media="(max-width: 1023px)" srcset="{{ asset('images/hero/tablet.jpg') }}">
+                            <img src="{{ asset('images/hero/desktop.jpg') }}" alt=""
+                                 class="h-full w-full object-cover object-center sm:object-[85%_center]"
+                                 loading="eager" fetchpriority="high" width="1774" height="887">
+                        </picture>
+                    @elseif ($i === 0)
+                        <div class="h-full w-full bg-gradient-to-br from-dc-teal-dark via-dc-teal-deep to-dc-teal"></div>
+                    @else
+                        <img src="{{ asset('images/landing/' . $heroBackgrounds[$i]['img'] . '.webp') }}" alt=""
+                             class="h-full w-full object-cover object-center sm:[object-position:var(--hero-pos)]"
+                             style="--hero-pos: {{ $heroBackgrounds[$i]['position'] }};" loading="lazy">
+                    @endif
+                </div>
+            @endforeach
             <div class="absolute inset-0 hidden sm:block" style="background: linear-gradient(to right, #0a2f2c 0%, rgba(10,47,44,0.6) 45%, transparent 100%)"></div>
             <div class="absolute inset-0 sm:hidden" style="background: linear-gradient(to top, #0a2f2c 0%, rgba(10,47,44,0.72) 45%, rgba(10,47,44,0.5) 100%)"></div>
         </div>
@@ -49,35 +156,37 @@
             {{-- Content area — centers within the space genuinely above the floating card (see reserve spacer below) --}}
             <div class="flex flex-1 items-center">
                 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <div class="max-w-lg lg:max-w-xl">
-                        <h1 class="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.75rem]">
-                            Family-Friendly<br>
-                            Dental Care
-                        </h1>
+                    {{-- Stacked, crossfading slide text — headline/description/chips rotate with the
+                         background; the cards and service tags below stay fixed across all slides. --}}
+                    <div class="relative min-h-[260px] max-w-lg sm:min-h-[220px] lg:max-w-xl">
+                        @foreach ($heroSlides as $i => $slide)
+                            <div class="absolute inset-0 transition-opacity duration-700" :class="heroIndex === {{ $i }} ? '' : 'pointer-events-none'" style="opacity: {{ $i === 0 ? 1 : 0 }};" :style="`opacity: ${heroIndex === {{ $i }} ? 1 : 0}`">
+                                <h1 class="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.75rem]">
+                                    {{ $slide['line1'] }}<br>
+                                    {{ $slide['line2'] }}
+                                </h1>
 
-                        <p class="mt-4 max-w-md text-base leading-relaxed text-white/75 sm:text-lg">
-                            A new platform connecting you with verified, licensed dental clinics across Tanzania. Compare real patient experiences and choose with confidence.
-                        </p>
+                                <p class="mt-4 max-w-md text-base leading-relaxed text-white/75 sm:text-lg">
+                                    {{ $slide['desc'] }}
+                                </p>
 
-                        <div class="-mx-4 mt-5 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
-                            @foreach ([
-                                ['label' => 'Verified Clinics', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>'],
-                                ['label' => 'Transparent Pricing', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/>'],
-                                ['label' => 'Trusted Reviews', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>'],
-                            ] as $chip)
-                                <span class="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur-sm sm:px-3.5 sm:text-xs">
-                                    <svg class="h-3.5 w-3.5 shrink-0 text-dc-teal sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">{!! $chip['icon'] !!}</svg>
-                                    {{ $chip['label'] }}
-                                </span>
-                            @endforeach
-                        </div>
+                                <div class="mt-5 flex flex-nowrap items-center gap-1.5 sm:flex-wrap sm:gap-2">
+                                    @foreach ($slide['chips'] as $chip)
+                                        <span class="inline-flex shrink items-center gap-1 whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-1.5 py-1 text-[9px] font-semibold text-white/90 backdrop-blur-sm sm:shrink-0 sm:gap-1.5 sm:px-3.5 sm:py-1.5 sm:text-xs">
+                                            <svg class="h-2.5 w-2.5 shrink-0 text-dc-teal sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">{!! $chip['icon'] !!}</svg>
+                                            <span class="truncate">{{ $chip['label'] }}</span>
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
 
             {{-- Reserve strip: matches the card row's footprint so the flex-1 area above truly ends there,
                  letting the hero text center within genuinely available space instead of overlapping it --}}
-            <div class="h-[270px] shrink-0 sm:h-[190px] lg:h-[200px]" aria-hidden="true"></div>
+            <div class="h-[240px] shrink-0 sm:h-[190px] lg:h-[200px]" aria-hidden="true"></div>
 
             {{-- Bottom bar — extra bottom clearance below lg so nothing sits behind the floating app nav --}}
             <div class="relative z-10 mx-auto w-full max-w-7xl px-4 pb-28 lg:pb-6 lg:px-8">
@@ -93,14 +202,10 @@
 
                     <div class="flex items-center justify-end gap-2 sm:gap-3">
                         <span class="hidden text-xs font-medium text-white sm:inline">Preview</span>
-                        <span class="text-sm font-bold text-white"><span x-text="String(cardIndex + 1).padStart(2, '0')"></span><span class="text-white/70"> / <span x-text="String(totalCards).padStart(2, '0')"></span></span></span>
+                        <span class="text-sm font-bold text-white"><span x-text="String(heroIndex + 1).padStart(2, '0')"></span><span class="text-white/70"> / <span x-text="String(totalSlides).padStart(2, '0')"></span></span></span>
                         <div class="hidden items-center gap-2 sm:flex">
-                            <button type="button" @click="scrollToCard(cardIndex - 1)" :disabled="cardIndex === 0"
-                                    :class="cardIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:text-white'"
-                                    class="text-xs font-semibold text-white/80 transition">Prev</button>
-                            <button type="button" @click="scrollToCard(cardIndex + 1)" :disabled="cardIndex === totalCards - 1"
-                                    :class="cardIndex === totalCards - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:text-white/80'"
-                                    class="text-xs font-semibold text-white transition">Next</button>
+                            <button type="button" @click="goToSlide(heroIndex - 1)" class="text-xs font-semibold text-white/80 transition hover:text-white">Prev</button>
+                            <button type="button" @click="goToSlide(heroIndex + 1)" class="text-xs font-semibold text-white transition hover:text-white/80">Next</button>
                         </div>
                     </div>
                 </div>
@@ -113,8 +218,10 @@
             <div class="mx-auto flex max-w-7xl items-end justify-between gap-4 px-4 sm:px-6 lg:px-8">
                 <div class="min-w-0 flex-1 sm:flex-initial">
                     <div class="flex flex-col gap-2.5">
-                    {{-- Swipeable card track: both cards visible side by side from sm up; one at a time,
-                         swipeable with a peek of the next, on mobile --}}
+                    {{-- Swipeable card track: one full card per view on mobile (swipe or use the dots/
+                         Prev-Next below — no more "cut in half" peek of the next card), both cards
+                         visible side by side from sm up. Card layout (icon row / bold heading / image
+                         with rating badge / description) follows the referenced card design. --}}
                     <div x-ref="cardTrack"
                          @scroll.debounce.150ms="cardIndex = $refs.cardTrack.children.length > 1 ? Math.round($refs.cardTrack.scrollLeft / ($refs.cardTrack.children[1].getBoundingClientRect().left - $refs.cardTrack.children[0].getBoundingClientRect().left)) : 0"
                          class="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-visible sm:snap-none [&::-webkit-scrollbar]:hidden">
@@ -122,17 +229,25 @@
                             ['img' => 'dental-examination-closeup', 'alt' => 'Professional dental examination', 'caption' => 'Restore natural healthy confident dental growth.'],
                             ['img' => 'dentist-virtual-consultation', 'alt' => 'Online dental consultation', 'caption' => 'Book appointments and consult online with ease.'],
                         ] as $card)
-                            <div class="w-[74vw] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl sm:w-52 lg:w-60">
-                                <img src="{{ asset('images/landing/' . $card['img'] . '.webp') }}" alt="{{ $card['alt'] }}"
-                                     class="h-24 w-full object-cover lg:h-28" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
-                                <div class="px-3 py-2.5">
-                                    <p class="text-[11px] leading-snug text-white/80">{{ $card['caption'] }}</p>
-                                    <div class="mt-1.5 flex items-center gap-1.5">
+                            <div class="w-full shrink-0 snap-start overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-2.5 shadow-2xl backdrop-blur-xl sm:w-56 lg:w-64">
+                                <div class="flex items-center justify-between">
+                                    <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-white">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                                    </span>
+                                    <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-white">
+                                        <svg class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/></svg>
+                                    </span>
+                                </div>
+                                <p class="mt-1.5 text-xs font-bold leading-snug text-white">{{ $card['alt'] }}</p>
+                                <div class="relative mt-1.5 overflow-hidden rounded-xl">
+                                    <img src="{{ asset('images/landing/' . $card['img'] . '.webp') }}" alt="{{ $card['alt'] }}"
+                                         class="h-24 w-full object-cover object-top sm:h-20 lg:h-24" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                                    <div class="absolute bottom-1.5 left-1.5 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
                                         <svg class="h-3 w-3 shrink-0 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                        <span class="text-xs font-bold text-white">{{ $ratingLabel }}</span>
-                                        <span class="text-[10px] text-white/50">[Rating]</span>
+                                        <span class="text-[10px] font-bold text-white">{{ $ratingLabel }}</span>
                                     </div>
                                 </div>
+                                <p class="mt-1.5 text-[10px] leading-snug text-white/70">{{ $card['caption'] }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -182,7 +297,7 @@
     </section>
 
     {{-- ABOUT — Platform description + live stats --}}
-    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
         <div class="pointer-events-none absolute right-0 top-1/4 h-80 w-80 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
 
         <div class="relative grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
@@ -235,7 +350,7 @@
     </section>
 
     {{-- FEATURED TREATMENT — Image showcase --}}
-    <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+    <section class="mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
         <div data-reveal class="text-center">
             <span class="dc-badge bg-dc-mint/80 text-dc-teal-deep">Featured Treatment</span>
             <h2 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">Modern care for a healthier smile</h2>
@@ -290,7 +405,7 @@
     </section>
 
     {{-- WHY DENTAL CONNECT — Patient-focused features + testimonial --}}
-    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
         <div class="pointer-events-none absolute -left-20 top-1/3 h-72 w-72 rounded-full bg-dc-mint/50 blur-3xl" aria-hidden="true"></div>
 
         <div class="relative grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
@@ -326,15 +441,18 @@
                     Built for how dental care actually works.
                 </h2>
 
-                <div class="mt-8 space-y-5">
+                <div class="mt-8 space-y-5" x-data="{ activeFeature: 0 }" @mouseleave="activeFeature = 0">
                     @foreach ([
                         ['title' => 'Verified Clinic Network', 'desc' => 'Every clinic is reviewed and verified before joining. Browse clear profiles with credentials, services and real patient reviews.', 'icon' => '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>'],
                         ['title' => 'Simple Appointment Booking', 'desc' => 'Request, confirm and reschedule appointments from your phone. No phone calls or waiting needed.', 'icon' => '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>'],
                         ['title' => 'Real Patient Reviews', 'desc' => 'Read honest feedback from other patients to help you choose the right clinic for your needs.', 'icon' => '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>'],
                         ['title' => 'Transparent Pricing', 'desc' => 'See service costs before you book, so you can plan your dental care with confidence.', 'icon' => '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>'],
-                    ] as $feature)
-                        <div class="flex gap-4">
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-dc-mint text-dc-teal-deep">
+                    ] as $i => $feature)
+                        <div @mouseenter="activeFeature = {{ $i }}"
+                             class="flex -mx-3 gap-4 rounded-2xl px-3 py-2 transition-all duration-300"
+                             :class="activeFeature === {{ $i }} ? '-translate-y-0.5 bg-white/70 shadow-[0_8px_24px_-8px_rgba(15,118,110,0.2)]' : ''">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-dc-teal-deep transition-all duration-300"
+                                 :class="activeFeature === {{ $i }} ? 'scale-110 bg-gradient-to-br from-dc-teal to-dc-teal-deep text-white' : 'bg-dc-mint'">
                                 {!! $feature['icon'] !!}
                             </div>
                             <div>
@@ -345,19 +463,68 @@
                     @endforeach
                 </div>
 
-                <div class="dc-card mt-8 p-6">
-                    <div class="flex items-start gap-1 text-dc-teal">
-                        <svg class="h-8 w-8 shrink-0 opacity-30" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                {{-- Testimonial stack — swipe or use the dots/arrows to cycle; the active card
+                     shifts to the back of the deck with a smooth transform/opacity transition
+                     while the next one glides up to the front. --}}
+                <div x-data="{
+                        tCount: {{ count($testimonials) }},
+                        tIndex: 0,
+                        dragStartX: null,
+                        dragDeltaX: 0,
+                        tNext() { this.tIndex = (this.tIndex + 1) % this.tCount; },
+                        tPrev() { this.tIndex = (this.tIndex - 1 + this.tCount) % this.tCount; },
+                        tOffset(i) { return (i - this.tIndex + this.tCount) % this.tCount; },
+                        onTouchStart(e) { this.dragStartX = e.touches[0].clientX; },
+                        onTouchMove(e) { if (this.dragStartX !== null) this.dragDeltaX = e.touches[0].clientX - this.dragStartX; },
+                        onTouchEnd() {
+                            if (this.dragDeltaX < -40) this.tNext();
+                            else if (this.dragDeltaX > 40) this.tPrev();
+                            this.dragStartX = null; this.dragDeltaX = 0;
+                        },
+                     }"
+                     class="mt-8">
+                    <div class="relative min-h-[260px] sm:min-h-[210px]" @touchstart="onTouchStart($event)" @touchmove="onTouchMove($event)" @touchend="onTouchEnd()">
+                        @foreach ($testimonials as $i => $t)
+                            {{-- x-show fully removes cards past the visible depth (display:none), not just
+                                 opacity — with several cards each using backdrop-blur, keeping them all
+                                 painted at once (even at opacity 0) is expensive and made the swipe feel
+                                 janky. Capping it to 2 blurred layers keeps the glide smooth. --}}
+                            <div x-show="tOffset({{ $i }}) < 2"
+                                 x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                                 x-transition:leave="transition-opacity duration-300" x-transition:leave-end="opacity-0"
+                                 class="dc-card absolute inset-0 p-6 transition-[transform,opacity] duration-500 ease-out"
+                                 :style="`transform: translateY(${tOffset({{ $i }}) * 14}px) scale(${1 - tOffset({{ $i }}) * 0.05}); opacity: ${1 - tOffset({{ $i }}) * 0.35}; z-index: ${100 - tOffset({{ $i }})}; pointer-events: ${tOffset({{ $i }}) === 0 ? 'auto' : 'none'};`">
+                                <div class="flex items-start gap-1 text-dc-teal">
+                                    <svg class="h-8 w-8 shrink-0 opacity-30" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                                </div>
+                                <p class="mt-3 text-sm italic leading-relaxed text-dc-text-secondary">
+                                    "{{ $t['quote'] }}"
+                                </p>
+                                <div class="mt-4 flex items-center gap-3">
+                                    <img src="{{ asset('images/landing/' . $t['avatar'] . '.webp') }}" alt="" class="h-10 w-10 rounded-full object-cover" loading="lazy" aria-hidden="true">
+                                    <div>
+                                        <p class="text-sm font-bold text-dc-text">{{ $t['name'] }}</p>
+                                        <p class="text-xs text-dc-text-secondary">{{ $t['meta'] }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <p class="mt-3 text-sm italic leading-relaxed text-dc-text-secondary">
-                        "Our mission is simple: make it easy for every family in Tanzania to find quality dental care they can trust."
-                    </p>
-                    <div class="mt-4 flex items-center gap-3">
-                        <img src="{{ asset('images/landing/dentist-tablet-clinic.webp') }}" alt="" class="h-10 w-10 rounded-full object-cover" loading="lazy" aria-hidden="true">
-                        <div>
-                            <p class="text-sm font-bold text-dc-text">Dental Connect Team</p>
-                            <p class="text-xs text-dc-text-secondary">Dar es Salaam, Tanzania</p>
+
+                    <div class="mt-4 flex items-center justify-center gap-4">
+                        <button type="button" @click="tPrev()" aria-label="Previous testimonial" class="flex h-8 w-8 items-center justify-center rounded-full border border-dc-border bg-white text-dc-text-secondary transition hover:bg-dc-mint-light hover:text-dc-teal-deep">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+                        </button>
+                        <div class="flex gap-1.5">
+                            <template x-for="i in tCount" :key="i">
+                                <button type="button" @click="tIndex = i - 1" :aria-label="'Show testimonial ' + i"
+                                        :class="tIndex === i - 1 ? 'w-5 bg-dc-teal' : 'w-1.5 bg-dc-border'"
+                                        class="h-1.5 rounded-full transition-all duration-300"></button>
+                            </template>
                         </div>
+                        <button type="button" @click="tNext()" aria-label="Next testimonial" class="flex h-8 w-8 items-center justify-center rounded-full border border-dc-border bg-white text-dc-text-secondary transition hover:bg-dc-mint-light hover:text-dc-teal-deep">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -365,7 +532,7 @@
     </section>
 
     {{-- SERVICES — Feature cards --}}
-    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
         <div class="pointer-events-none absolute right-0 bottom-0 h-72 w-72 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
 
         <div data-reveal class="relative text-center">
@@ -379,7 +546,7 @@
                 ['title' => 'Tooth Filling', 'desc' => 'Durable, natural-looking restorations that repair cavities and protect your teeth from further decay.', 'icon' => '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>'],
                 ['title' => 'Orthodontics', 'desc' => 'Braces, aligners and specialised treatments to straighten your teeth and correct your bite.', 'icon' => '<svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z"/></svg>'],
             ] as $i => $service)
-                <div data-reveal style="--reveal-delay: {{ $i * 90 }}ms" class="dc-card group p-6 transition hover:shadow-lg">
+                <div data-reveal style="--reveal-delay: {{ $i * 90 }}ms" class="group rounded-2xl border border-white/50 bg-white/30 p-6 shadow-[0_4px_24px_-8px_rgba(15,118,110,0.1)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-white/70 hover:bg-white/55 hover:shadow-[0_16px_36px_-12px_rgba(15,118,110,0.3)]">
                     <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-dc-mint/80 text-dc-teal-deep transition group-hover:bg-gradient-to-br group-hover:from-dc-teal group-hover:to-dc-teal-deep group-hover:text-white">
                         {!! $service['icon'] !!}
                     </div>
@@ -395,7 +562,7 @@
     </section>
 
     {{-- TEAM / CLINIC SHOWCASE — Full width image banner --}}
-    <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+    <section class="mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
         <div data-reveal class="group relative overflow-hidden rounded-3xl">
             <img src="{{ asset('images/landing/dental-team-portrait.webp') }}"
                  alt="Professional dental team at a Dental Connect verified clinic"
@@ -420,7 +587,7 @@
     </section>
 
     {{-- ORAL CARE INSIGHTS — Blog-style cards --}}
-    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-24 sm:px-6 lg:px-8">
+    <section class="relative mx-auto max-w-7xl overflow-hidden px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
         <div class="pointer-events-none absolute left-1/3 top-0 h-64 w-64 rounded-full bg-dc-teal/10 blur-3xl" aria-hidden="true"></div>
 
         <div data-reveal class="relative flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
@@ -470,8 +637,11 @@
     </section>
 
     {{-- NEWSLETTER + CTA --}}
-    <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-        <div data-reveal class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-dc-teal via-dc-teal-deep to-dc-teal-dark px-6 py-12 text-white sm:px-12 sm:py-16">
+    <section class="mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 sm:pt-20 lg:px-8">
+        <div data-reveal class="relative overflow-hidden rounded-3xl px-6 py-12 text-white sm:px-12 sm:py-16">
+            <img src="{{ asset('images/landing/dentist-patient-oceanview.webp') }}" alt=""
+                 class="absolute inset-0 h-full w-full object-cover" loading="lazy" aria-hidden="true">
+            <div class="absolute inset-0 bg-gradient-to-br from-dc-teal-dark/95 via-dc-teal-deep/90 to-dc-teal-dark/80"></div>
             <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5 blur-2xl" aria-hidden="true"></div>
             <div class="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-white/5 blur-2xl" aria-hidden="true"></div>
 
