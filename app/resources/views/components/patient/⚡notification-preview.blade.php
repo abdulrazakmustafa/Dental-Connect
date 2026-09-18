@@ -34,7 +34,7 @@ new class extends Component
 }
 ?>
 
-<div wire:poll.15s class="max-h-[26rem] overflow-y-auto">
+<div wire:poll.15s.visible class="max-h-[26rem] overflow-y-auto">
     <div class="flex items-center justify-between px-4 pb-2 pt-4">
         <p class="text-sm font-extrabold">Notifications</p>
         @if ($this->notifications->whereNull('read_at')->count() > 0)

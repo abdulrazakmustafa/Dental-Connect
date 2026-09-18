@@ -19,6 +19,29 @@ class RegistrationAndLoginTest extends TestCase
 
     public function test_patient_can_register(): void
     {
+        $clinic = Clinic::factory()->create([
+            'verification_status' => Clinic::STATUS_APPROVED,
+            'is_active' => true,
+        ]);
+
+        $response = $this->post(route('register.store'), [
+            'role' => 'patient',
+            'name' => 'Grace Mwakasege',
+            'clinic_id' => $clinic->public_id,
+            'phone' => '+255712345678',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+            'terms' => '1',
+        ]);
+
+        $response->assertRedirect(route('patient.dashboard'));
+        $user = User::where('phone', '+255712345678')->first();
+        $this->assertTrue($user->hasRole('patient'));
+        $this->assertDatabaseHas('clinic_patients', ['clinic_id' => $clinic->id, 'user_id' => $user->id]);
+    }
+
+    public function test_patient_registration_requires_a_clinic(): void
+    {
         $response = $this->post(route('register.store'), [
             'role' => 'patient',
             'name' => 'Grace Mwakasege',
@@ -28,8 +51,8 @@ class RegistrationAndLoginTest extends TestCase
             'terms' => '1',
         ]);
 
-        $response->assertRedirect(route('clinics.index'));
-        $this->assertTrue(User::where('phone', '+255712345678')->first()->hasRole('patient'));
+        $response->assertSessionHasErrors('clinic_id');
+        $this->assertDatabaseMissing('users', ['phone' => '+255712345678']);
     }
 
     public function test_clinic_registration_creates_draft_clinic_and_redirects_to_onboarding(): void

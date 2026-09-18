@@ -153,13 +153,17 @@
                     <button @click="open = !open" type="button" aria-label="Notifications"
                             class="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/70 text-dc-text-secondary shadow-sm ring-1 ring-dc-border transition hover:text-dc-teal-deep">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4a5 5 0 00-5 5v3.1c0 .6-.2 1.2-.6 1.6L5 15.5c-.7.8-.2 2 .8 2h12.4c1 0 1.5-1.2.8-2l-1.4-1.8a2.3 2.3 0 01-.6-1.6V9a5 5 0 00-5-5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.5 19a2.5 2.5 0 005 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                        <livewire:patient.unread-badge :key="'badge-bell'" />
+                        <livewire:patient.unread-badge :poll="true" :key="'badge-bell'" />
                     </button>
 
                     <div x-show="open" x-transition.origin.top.right
                          x-cloak
                          class="absolute right-0 z-40 mt-3 w-80 max-w-[85vw] overflow-hidden rounded-3xl border border-white/30 bg-white/40 shadow-2xl shadow-dc-teal-deep/10 backdrop-blur-2xl">
-                        <livewire:patient.notification-preview lazy />
+                        {{-- Not lazy: lazy-loading would add its own extra AJAX round-trip on
+                             every single page load/navigation for content that's hidden by
+                             default anyway — a plain eager render costs nothing extra since its
+                             query is small and rides along in the same response. --}}
+                        <livewire:patient.notification-preview />
                     </div>
                 </div>
 

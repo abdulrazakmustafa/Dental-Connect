@@ -8,10 +8,20 @@ new class extends Component
 {
     public string $variant = 'dot';
     public bool $active = false;
+    public bool $poll = false;
 
     public function getCountProperty(): int
     {
         return PatientNotification::where('user_id', auth()->id())->whereNull('read_at')->count();
+    }
+
+    public function tick(): void
+    {
+        // Only the single :poll="true" instance (the header bell — always in the DOM at
+        // every breakpoint) actually polls the server. It fans the result out to every
+        // other badge instance (sidebar/rail/mobile-nav) via this event instead of each
+        // of them running their own independent wire:poll — 4 pollers down to 1.
+        $this->dispatch('notifications-changed');
     }
 
     public function getClassesProperty(): string
@@ -35,4 +45,4 @@ new class extends Component
 }
 ?>
 
-<span wire:poll.20s class="{{ $this->classes }}">{{ $this->variant === 'micro' ? min($this->count, 9) : ($this->count > 9 ? '9+' : $this->count) }}</span>
+<span @if ($poll) wire:poll.20s="tick" @endif class="{{ $this->classes }}">{{ $this->variant === 'micro' ? min($this->count, 9) : ($this->count > 9 ? '9+' : $this->count) }}</span>

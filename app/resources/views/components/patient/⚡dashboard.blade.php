@@ -13,10 +13,14 @@ new
 class extends Component
 {
     public ?int $activeClinicPatientId = null;
+    public int $calendarMonth;
+    public int $calendarYear;
 
     public function mount(): void
     {
         $this->activeClinicPatientId = session('active_clinic_patient_id');
+        $this->calendarMonth = (int) now()->format('n');
+        $this->calendarYear = (int) now()->format('Y');
     }
 
     public function getClinicPatientsProperty()
@@ -55,6 +59,39 @@ class extends Component
             ->orderByDesc('created_at')
             ->limit(5)
             ->get();
+    }
+
+    public function getCalendarAppointmentsProperty()
+    {
+        $user = auth()->user();
+        $activeClinicPatient = $this->activeClinicPatient;
+
+        return Appointment::whereHas('clinicPatient', fn ($q) => $q->where('user_id', $user->id))
+            ->when($activeClinicPatient, fn ($q) => $q->where('clinic_patient_id', $activeClinicPatient->id))
+            ->whereIn('status', [Appointment::STATUS_REQUESTED, Appointment::STATUS_CONFIRMED, Appointment::STATUS_RESCHEDULE_PROPOSED])
+            ->whereYear('preferred_date', $this->calendarYear)
+            ->whereMonth('preferred_date', $this->calendarMonth)
+            ->orderBy('preferred_date')
+            ->get(['id', 'public_id', 'preferred_date', 'preferred_time'])
+            ->keyBy(fn ($a) => $a->preferred_date->format('Y-m-d'));
+    }
+
+    public function calendarPrevMonth(): void
+    {
+        $this->calendarMonth--;
+        if ($this->calendarMonth < 1) {
+            $this->calendarMonth = 12;
+            $this->calendarYear--;
+        }
+    }
+
+    public function calendarNextMonth(): void
+    {
+        $this->calendarMonth++;
+        if ($this->calendarMonth > 12) {
+            $this->calendarMonth = 1;
+            $this->calendarYear++;
+        }
     }
 
     public function selectClinic(int $clinicPatientId): void
@@ -175,22 +212,88 @@ class extends Component
                 @endif
             </div>
 
-            {{-- Quick actions --}}
+            {{-- Appointment calendar: marks every day this month with a confirmed/requested visit --}}
+            @php
+                $calStart = \Carbon\Carbon::createFromDate($calendarYear, $calendarMonth, 1);
+                $calDaysInMonth = $calStart->daysInMonth;
+                $calStartOffset = $calStart->dayOfWeekIso - 1;
+                $calTodayIso = now()->format('Y-m-d');
+            @endphp
+            <div class="dc-card p-5">
+                <div class="flex items-center justify-between">
+                    <button wire:click="calendarPrevMonth" type="button" class="flex h-7 w-7 items-center justify-center rounded-full text-dc-text-secondary transition hover:bg-dc-mint-light" aria-label="Previous month">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <p class="text-sm font-bold">{{ $calStart->format('F Y') }}</p>
+                    <button wire:click="calendarNextMonth" type="button" class="flex h-7 w-7 items-center justify-center rounded-full text-dc-text-secondary transition hover:bg-dc-mint-light" aria-label="Next month">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+                <div class="mt-3 grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-dc-text-secondary">
+                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                </div>
+                <div class="mt-1 grid grid-cols-7 gap-1">
+                    @for ($i = 0; $i < $calStartOffset; $i++)
+                        <span></span>
+                    @endfor
+                    @for ($d = 1; $d <= $calDaysInMonth; $d++)
+                        @php
+                            $iso = $calStart->copy()->day($d)->format('Y-m-d');
+                            $appt = $this->calendarAppointments->get($iso);
+                            $isToday = $iso === $calTodayIso;
+                        @endphp
+                        @if ($appt)
+                            <a href="{{ route('patient.appointments.show', $appt) }}" wire:navigate
+                               class="flex aspect-square items-center justify-center rounded-full bg-dc-teal text-sm font-bold text-white shadow-sm shadow-dc-teal/40 transition hover:bg-dc-teal-deep {{ $isToday ? 'ring-2 ring-offset-2 ring-dc-teal-deep' : '' }}"
+                               title="{{ $appt->formattedTime() ?? 'Appointment' }}">
+                                {{ $d }}
+                            </a>
+                        @else
+                            <span class="flex aspect-square items-center justify-center rounded-full text-sm {{ $isToday ? 'font-extrabold text-dc-teal-deep ring-2 ring-dc-teal' : 'text-dc-text' }}">{{ $d }}</span>
+                        @endif
+                    @endfor
+                </div>
+                @if ($this->calendarAppointments->isNotEmpty())
+                    <p class="mt-3 flex items-center gap-1.5 text-xs text-dc-text-secondary">
+                        <span class="h-2.5 w-2.5 rounded-full bg-dc-teal"></span> Days with a scheduled visit
+                    </p>
+                @endif
+            </div>
+
+            {{-- Quick actions: icon-only, no titles --}}
             <div>
                 <h2 class="text-sm font-bold text-dc-text-secondary">Quick actions</h2>
                 <div class="mt-3 grid grid-cols-4 gap-3 lg:grid-cols-4">
                     @php
                         $quickActions = [
-                            ['icon' => '🔍', 'label' => 'Find Clinic', 'route' => 'clinics.index'],
-                            ['icon' => '▤', 'label' => 'Appointments', 'route' => 'patient.appointments.index'],
-                            ['icon' => '○', 'label' => 'Inbox', 'route' => 'patient.notifications.index'],
-                            ['icon' => '?', 'label' => 'Support', 'route' => 'contact'],
+                            [
+                                'label' => 'Find Clinic',
+                                'route' => 'clinics.index',
+                                'icon' => '<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+                            ],
+                            [
+                                'label' => 'Appointments',
+                                'route' => 'patient.appointments.index',
+                                'icon' => '<rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16M9 3v3M15 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+                            ],
+                            [
+                                'label' => 'Inbox',
+                                'route' => 'patient.notifications.index',
+                                'icon' => '<rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 7l7.5 6 7.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+                            ],
+                            [
+                                'label' => 'Support',
+                                'route' => 'contact',
+                                'icon' => '<circle cx="12" cy="12" r="8.25" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.3a2.5 2.5 0 014.9.7c0 1.7-2.4 1.9-2.4 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.6" r="0.9" fill="currentColor"/>',
+                            ],
                         ];
                     @endphp
                     @foreach ($quickActions as $action)
-                        <a href="{{ route($action['route']) }}" wire:navigate class="dc-card flex flex-col items-center gap-2 p-3 text-center transition hover:-translate-y-0.5 hover:shadow-md">
-                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-dc-mint-light text-lg">{{ $action['icon'] }}</span>
-                            <span class="text-[11px] font-semibold leading-tight">{{ $action['label'] }}</span>
+                        <a href="{{ route($action['route']) }}" wire:navigate aria-label="{{ $action['label'] }}"
+                           class="dc-card flex items-center justify-center p-4 transition hover:-translate-y-0.5 hover:shadow-md">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-dc-mint-light text-dc-teal-deep">
+                                <svg width="21" height="21" viewBox="0 0 24 24" fill="none">{!! $action['icon'] !!}</svg>
+                            </span>
                         </a>
                     @endforeach
                 </div>
