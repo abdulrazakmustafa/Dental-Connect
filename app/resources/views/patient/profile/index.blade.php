@@ -49,11 +49,11 @@
                 <span class="text-dc-text-secondary">&rsaquo;</span>
             </button>
 
-            <a href="{{ route('clinics.index') }}" wire:navigate class="dc-card flex items-center gap-3 p-4">
+            <a href="{{ route('patient.support') }}" wire:navigate class="dc-card flex items-center gap-3 p-4">
                 <span class="dc-avatar-square h-10 w-10 shrink-0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3.5v6c0 4.2-2.9 7.9-7 8.8-4.1-.9-7-4.6-7-8.8v-6L12 3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
                 <div class="min-w-0 flex-1">
-                    <p class="text-sm font-bold">My Clinic Enrollment</p>
-                    <p class="mt-0.5 text-xs text-dc-text-secondary">View or enroll separately with another clinic</p>
+                    <p class="text-sm font-bold">My Clinic</p>
+                    <p class="mt-0.5 text-xs text-dc-text-secondary">Details, contact and app information</p>
                 </div>
                 <span class="text-dc-text-secondary">&rsaquo;</span>
             </a>

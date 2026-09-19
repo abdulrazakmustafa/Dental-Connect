@@ -60,7 +60,7 @@ class EnrollmentAndAppointmentTest extends TestCase
         $this->assertSame(1, ClinicPatient::where('clinic_id', $clinic->id)->where('user_id', $patient->id)->count());
     }
 
-    public function test_patient_enrolling_with_two_clinics_gets_two_independent_records(): void
+    public function test_patient_can_only_enroll_with_one_clinic(): void
     {
         $patient = User::factory()->create();
         $patient->assignRole('patient');
@@ -69,13 +69,10 @@ class EnrollmentAndAppointmentTest extends TestCase
 
         $payload = ['first_name' => 'Grace', 'last_name' => 'Mwakasege'];
         $this->actingAs($patient)->post(route('patient.clinics.enroll', $clinicA), $payload);
-        $this->actingAs($patient)->post(route('patient.clinics.enroll', $clinicB), $payload);
+        $this->actingAs($patient)->post(route('patient.clinics.enroll', $clinicB), $payload)
+            ->assertRedirect(route('patient.support'));
 
-        $recordA = ClinicPatient::where('clinic_id', $clinicA->id)->where('user_id', $patient->id)->first();
-        $recordB = ClinicPatient::where('clinic_id', $clinicB->id)->where('user_id', $patient->id)->first();
-
-        $this->assertNotNull($recordA);
-        $this->assertNotNull($recordB);
-        $this->assertNotSame($recordA->patient_number, $recordB->patient_number);
+        $this->assertNotNull(ClinicPatient::where('clinic_id', $clinicA->id)->where('user_id', $patient->id)->first());
+        $this->assertNull(ClinicPatient::where('clinic_id', $clinicB->id)->where('user_id', $patient->id)->first());
     }
 }

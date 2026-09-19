@@ -38,7 +38,7 @@
         </span>
         <div>
             <p class="text-sm font-bold">Your clinic relationship stays private</p>
-            <p class="mt-0.5 text-xs text-dc-text-secondary">Only {{ $clinic->name }} can see this enrollment. Enrolling with another clinic later creates a separate record.</p>
+            <p class="mt-0.5 text-xs text-dc-text-secondary">Only {{ $clinic->name }} can see this enrollment.</p>
         </div>
     </div>
 </x-layouts.patient-app>

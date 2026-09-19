@@ -11,8 +11,12 @@ use Illuminate\View\View;
 
 class ClinicEnrollmentController extends Controller
 {
-    public function create(Clinic $clinic): View
+    public function create(Request $request, Clinic $clinic): View|RedirectResponse
     {
+        if ($request->user()->clinicPatients()->exists()) {
+            return redirect()->route('patient.support');
+        }
+
         abort_unless($clinic->isVerified() && $clinic->is_active, 404);
 
         return view('patient.clinics.enroll', ['clinic' => $clinic]);
@@ -20,6 +24,11 @@ class ClinicEnrollmentController extends Controller
 
     public function store(Request $request, Clinic $clinic, EnrollPatientWithClinicAction $action): RedirectResponse
     {
+        // One clinic per patient: no enrolling with a second clinic once already enrolled.
+        if ($request->user()->clinicPatients()->exists()) {
+            return redirect()->route('patient.support');
+        }
+
         abort_unless($clinic->isVerified() && $clinic->is_active, 404);
 
         $data = $request->validate([

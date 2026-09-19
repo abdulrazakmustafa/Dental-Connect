@@ -17,7 +17,7 @@
         }">
         <h1 class="text-3xl font-extrabold text-dc-text">Join Dental Connect</h1>
         <p class="mt-1 text-sm text-dc-text-secondary">
-            <span x-show="role === 'patient'">Choose the clinic you'd like to be a patient of. You can enroll with another clinic later from inside the app.</span>
+            <span x-show="role === 'patient'">Choose the clinic you'd like to be a patient of. Your appointments, messages and records stay with that clinic.</span>
             <span x-show="role !== 'patient'" x-cloak>
                 Register your <span x-text="role === 'clinic' ? 'clinic' : 'supplier account'"></span>. You'll complete your profile and submit it for verification next.
             </span>

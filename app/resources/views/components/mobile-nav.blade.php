@@ -193,7 +193,7 @@
                     @endphp
                     {{-- Positioning lives on this wrapper (reactive :style, no x-show) so it never
                          fights with the inner element's own x-show display toggling. --}}
-                    <div class="pointer-events-none absolute" :style="`left: ${moreX + ({{ $x }})}px; bottom: {{ 66 - $y }}px; margin-left: -24px; width: 48px;`">
+                    <div class="pointer-events-none absolute" :style="`left: ${moreX + ({{ $x }})}px; bottom: {{ 86 - $y }}px; margin-left: -24px; width: 48px;`">
                         <a href="{{ $item['href'] }}"
                            @click="closeMore()"
                            x-show="mobileMore"

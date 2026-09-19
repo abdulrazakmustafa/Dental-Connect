@@ -35,13 +35,6 @@
             <div class="dc-card p-6 text-center text-sm text-dc-text-secondary lg:col-span-2">No appointments here yet.</div>
         @endforelse
 
-        <a href="{{ route('clinics.index') }}" wire:navigate class="dc-card flex items-center gap-3 p-4 lg:col-span-2">
-            <span class="dc-avatar h-9 w-9 text-sm">C</span>
-            <div>
-                <p class="text-sm font-bold">Want to visit another clinic?</p>
-                <p class="mt-0.5 text-xs text-dc-text-secondary">Find a clinic and complete a separate enrollment.</p>
-            </div>
-        </a>
     </div>
 
     <div class="mt-4">{{ $appointments->links() }}</div>

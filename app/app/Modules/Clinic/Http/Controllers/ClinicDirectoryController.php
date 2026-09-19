@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Clinic\Models\Clinic;
 use App\Modules\Clinic\Models\Service;
 use App\Modules\Clinic\Models\Specialty;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -19,8 +20,27 @@ use Illuminate\View\View;
  */
 class ClinicDirectoryController extends Controller
 {
-    public function index(Request $request): View
+    /**
+     * A patient who already belongs to a clinic is not offered other clinics: the app is
+     * scoped to their own clinic, whose details live on the Support page.
+     */
+    private function enrolledPatientRedirect(): ?RedirectResponse
     {
+        $user = auth()->user();
+
+        if ($user && $user->hasRole('patient') && $user->clinicPatients()->exists()) {
+            return redirect()->route('patient.support');
+        }
+
+        return null;
+    }
+
+    public function index(Request $request): View|RedirectResponse
+    {
+        if ($redirect = $this->enrolledPatientRedirect()) {
+            return $redirect;
+        }
+
         $clinics = Clinic::query()
             ->select(['id', 'public_id', 'slug', 'name', 'logo_path', 'primary_region_id', 'verification_status', 'is_active'])
             ->where('verification_status', Clinic::STATUS_APPROVED)
@@ -46,8 +66,12 @@ class ClinicDirectoryController extends Controller
         ]);
     }
 
-    public function show(Clinic $clinic): View
+    public function show(Clinic $clinic): View|RedirectResponse
     {
+        if ($redirect = $this->enrolledPatientRedirect()) {
+            return $redirect;
+        }
+
         abort_unless(
             ($clinic->isVerified() && $clinic->is_active) || (auth()->check() && auth()->user()->can('view', $clinic)),
             404

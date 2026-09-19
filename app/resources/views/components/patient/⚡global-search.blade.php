@@ -34,6 +34,11 @@ new class extends Component
         ) ?? $safe);
     }
 
+    public function getOwnClinicsProperty()
+    {
+        return Clinic::whereIn('id', auth()->user()->clinicPatients()->pluck('clinic_id'))->get(['id', 'public_id', 'name']);
+    }
+
     public function getResultsProperty(): array
     {
         $q = trim($this->query);
@@ -49,19 +54,22 @@ new class extends Component
         $like = '%'.addcslashes($q, '%_\\').'%';
         $userId = auth()->id();
 
-        $clinics = Clinic::query()
-            ->where('verification_status', Clinic::STATUS_APPROVED)->where('is_active', true)
+        // Patients belong to one clinic, so clinic/service/dentist results are limited to it.
+        $clinicIds = $this->ownClinics->pluck('id');
+
+        $clinics = Clinic::query()->whereIn('id', $clinicIds)
             ->where(fn ($w) => $w->where('name', 'like', $like)
                 ->orWhereHas('services', fn ($s) => $s->where('services.name', 'like', $like))
                 ->orWhereHas('specialties', fn ($s) => $s->where('specialties.name', 'like', $like)))
             ->with('primaryLocation:id,clinic_id,city,area')
-            ->limit(4)->get(['id', 'public_id', 'name']);
+            ->limit(2)->get(['id', 'public_id', 'name']);
 
-        $services = Service::where('is_active', true)->where('name', 'like', $like)->limit(4)->get(['id', 'name']);
+        $services = Service::where('is_active', true)->where('name', 'like', $like)
+            ->whereHas('clinics', fn ($c) => $c->whereIn('clinics.id', $clinicIds))
+            ->limit(4)->get(['id', 'name']);
 
         $dentists = Dentist::where('status', 'active')->where('full_name', 'like', $like)
-            ->whereHas('clinic', fn ($c) => $c->where('verification_status', Clinic::STATUS_APPROVED)->where('is_active', true))
-            ->with('clinic:id,public_id,name')->limit(4)->get(['id', 'clinic_id', 'full_name']);
+            ->whereIn('clinic_id', $clinicIds)->limit(4)->get(['id', 'clinic_id', 'full_name']);
 
         $visits = Appointment::whereHas('clinicPatient', fn ($c) => $c->where('user_id', $userId))
             ->where(fn ($w) => $w->whereHas('service', fn ($s) => $s->where('name', 'like', $like))
@@ -77,8 +85,8 @@ new class extends Component
             ['Profile & settings', 'patient.profile.index', 'profile account personal information password privacy security notification settings'],
             ['Inbox', 'patient.notifications.index', 'inbox messages notifications alerts'],
             ['My visits', 'patient.appointments.index', 'visits appointments history bookings upcoming completed cancelled'],
-            ['Browse clinics', 'clinics.index', 'clinics find browse directory enroll'],
-            ['Help & support', 'contact', 'help support contact complaint issue'],
+            ['Support & clinic details', 'patient.support', 'support clinic details contact phone address about app help'],
+            ['Contact Dental Connect', 'contact', 'contact complaint issue platform report'],
         ])->filter(fn ($p) => stripos($p[0].' '.$p[2], $q) !== false)->take(3)->values();
 
         return compact('pages', 'clinics', 'services', 'dentists', 'visits', 'messages');
@@ -90,7 +98,7 @@ new class extends Component
         focused: false,
         open: false,
         hint: 0,
-        hints: ['Search clinics…', 'Search dentists…', 'Search services…', 'Search your visits…', 'Search messages…'],
+        hints: ['Search your clinic…', 'Search dentists…', 'Search services…', 'Search your visits…', 'Search messages…'],
     }"
     x-init="setInterval(() => { if (!focused && !$wire.query) hint = (hint + 1) % hints.length }, 3200)"
     @click.outside="open = false; focused = false"
@@ -98,7 +106,7 @@ new class extends Component
     class="relative">
 
     <form @submit.prevent="$wire.runSearch(); open = true"
-          class="relative flex items-center rounded-full bg-white p-1.5 shadow-sm ring-1 ring-dc-border transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
+          class="relative flex items-center rounded-full bg-white p-1 shadow-sm ring-1 ring-dc-border transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
           :class="focused ? 'shadow-lg shadow-dc-teal/15 ring-2 !ring-dc-teal' : ''">
 
         <div class="relative min-w-0 flex-1">
@@ -113,21 +121,21 @@ new class extends Component
             </div>
             <input type="text" x-ref="field" wire:model.live.debounce.300ms="query" autocomplete="off"
                    @focus="focused = true; open = true" @blur="setTimeout(() => { if (!$wire.query) focused = false }, 150)"
-                   :placeholder="focused ? 'Clinics, dentists, services, visits, messages…' : ''"
-                   class="h-11 w-full border-0 bg-transparent pl-4 pr-2 text-sm text-dc-text placeholder:text-dc-text-secondary focus:outline-none focus:ring-0" aria-label="Search">
+                   :placeholder="focused ? 'Your clinic, dentists, services, visits, messages…' : ''"
+                   class="h-9 w-full border-0 bg-transparent pl-4 pr-2 text-sm text-dc-text placeholder:text-dc-text-secondary focus:outline-none focus:ring-0" aria-label="Search">
         </div>
 
         <button type="button" x-show="$wire.query" x-cloak x-transition.opacity
                 @click="$wire.query = ''; $refs.field.focus()" aria-label="Clear search"
-                class="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-dc-text-secondary transition hover:bg-dc-mint-light">
+                class="mr-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-dc-text-secondary transition hover:bg-dc-mint-light">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
         </button>
 
         {{-- Search button: icon + label at rest, squeezes down to just the icon once typing starts --}}
         <button type="submit" aria-label="Search"
-                class="flex h-11 shrink-0 items-center rounded-full bg-gradient-to-r from-dc-teal to-dc-teal-deep text-white shadow-sm shadow-dc-teal/30 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] hover:brightness-110 active:scale-95">
-            <span class="flex h-11 w-11 shrink-0 items-center justify-center transition-transform duration-500" :class="focused ? 'scale-110' : ''">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                class="flex h-9 shrink-0 items-center rounded-full bg-gradient-to-r from-dc-teal to-dc-teal-deep text-white shadow-sm shadow-dc-teal/30 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] hover:brightness-110 active:scale-95">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center transition-transform duration-500" :class="focused ? 'scale-110' : ''">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             </span>
             <span class="overflow-hidden whitespace-nowrap text-sm font-bold transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
                   :class="focused ? 'max-w-0 opacity-0' : 'max-w-[6rem] opacity-100'">
@@ -156,7 +164,7 @@ new class extends Component
             @php
                 $groups = [
                     ['Go to', 'pages', 'M13 7l5 5-5 5M6 12h12'],
-                    ['Clinics', 'clinics', 'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15'],
+                    ['My clinic', 'clinics', 'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15'],
                     ['Services', 'services', 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
                     ['Dentists', 'dentists', 'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.1a7.5 7.5 0 0115 0'],
                     ['My visits', 'visits', 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5A2.25 2.25 0 015.25 5.25h13.5A2.25 2.25 0 0121 7.5v11.25M3 18.75A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75M3 11.25h18'],
@@ -172,9 +180,9 @@ new class extends Component
                         @php
                             [$href, $title, $sub] = match ($key) {
                                 'pages' => [route($item[1]), $item[0], 'Open page'],
-                                'clinics' => [route('clinics.show', $item), $item->name, $item->primaryLocation?->area ?? $item->primaryLocation?->city ?? 'Verified clinic'],
-                                'services' => [route('clinics.index', ['service' => $item->id]), $item->name, 'Clinics offering this service'],
-                                'dentists' => [route('clinics.show', $item->clinic), $item->full_name, $item->clinic->name],
+                                'clinics' => [route('patient.support'), $item->name, $item->primaryLocation?->area ?? $item->primaryLocation?->city ?? 'Your clinic'],
+                                'services' => [route('patient.appointments.book', $this->ownClinics->first()), $item->name, 'Book this service'],
+                                'dentists' => [route('patient.support'), $item->full_name, $this->ownClinics->firstWhere('id', $item->clinic_id)?->name],
                                 'visits' => [route('patient.appointments.show', $item), $item->service?->name ?? 'Appointment', $item->clinic->name.' · '.$item->preferred_date->format('j M Y')],
                                 'messages' => [route('patient.notifications.index'), $item->title, $item->body],
                             };
