@@ -79,6 +79,13 @@
     @livewireStyles
 </head>
 <body class="min-h-screen bg-dc-bg text-dc-text antialiased selection:bg-dc-mint">
+    {{-- Soft colored orbs behind everything: glass cards need something to frost over, otherwise
+         they just look like plain white boxes on the pale page background. --}}
+    <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+        <div class="absolute -left-24 top-24 h-80 w-80 rounded-full bg-dc-teal/25 blur-3xl"></div>
+        <div class="absolute -right-20 top-1/3 h-96 w-96 rounded-full bg-sky-300/25 blur-3xl"></div>
+        <div class="absolute bottom-10 left-1/4 h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl"></div>
+    </div>
     {{-- ============ DESKTOP SIDEBAR (lg+) ============ --}}
     <aside class="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-dc-border bg-white/80 backdrop-blur-xl lg:flex">
         <div class="flex h-20 items-center px-6">
@@ -137,7 +144,7 @@
     <div class="md:pl-20 lg:pl-72">
         {{-- Top chrome bar: back/title + global bell & avatar popovers. Always present so every
              patient page (custom header slot or default title bar) gets consistent live chrome. --}}
-        <header class="sticky top-0 z-30 border-b border-transparent bg-dc-bg/80 backdrop-blur-md md:border-dc-border">
+        <header class="sticky top-0 z-30 border-b border-transparent bg-dc-bg/90 md:border-dc-border">
             <div class="mx-auto flex h-16 max-w-6xl items-center gap-3 px-5 md:h-20 md:px-8">
                 @if ($back)
                     <a href="{{ $back }}" wire:navigate class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full hover:bg-white/60" aria-label="Back">
@@ -167,7 +174,7 @@
                          to a fully solid bg-white so nothing underneath ever bleeds through. --}}
                     <div x-show="open" x-transition.origin.top.right
                          x-cloak
-                         class="absolute right-0 z-40 mt-5 w-80 max-w-[85vw] overflow-hidden rounded-3xl border border-dc-border bg-white shadow-2xl shadow-dc-teal-deep/10">
+                         class="absolute right-0 z-40 mt-5 w-80 max-w-[85vw] overflow-hidden rounded-3xl border border-white/70 bg-white/55 shadow-2xl shadow-dc-teal-deep/15 backdrop-blur-2xl">
                         {{-- Not lazy: lazy-loading would add its own extra AJAX round-trip on
                              every single page load/navigation for content that's hidden by
                              default anyway — a plain eager render costs nothing extra since its

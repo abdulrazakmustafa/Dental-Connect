@@ -45,7 +45,7 @@ new class extends Component
     <div class="space-y-1 px-2 pb-2">
         @forelse ($this->notifications as $notification)
             <button wire:click="markRead('{{ $notification->public_id }}')"
-                    class="flex w-full items-start gap-3 rounded-2xl px-3 py-2.5 text-left transition hover:bg-dc-mint-light {{ $notification->read_at ? '' : 'bg-dc-mint-light' }}">
+                    class="flex w-full items-start gap-3 rounded-2xl px-3 py-2.5 text-left transition hover:bg-white/50 {{ $notification->read_at ? '' : 'bg-white/45' }}">
                 <span class="mt-1 h-2 w-2 shrink-0 rounded-full {{ $notification->read_at ? 'bg-transparent' : 'bg-dc-teal' }}"></span>
                 <span class="min-w-0 flex-1">
                     <span class="block truncate text-sm font-bold">{{ $notification->title }}</span>
@@ -59,7 +59,7 @@ new class extends Component
     </div>
 
     <a href="{{ route('patient.notifications.index') }}" wire:navigate
-       class="block border-t border-dc-border px-4 py-3 text-center text-sm font-bold text-dc-teal-deep hover:bg-dc-mint-light">
+       class="block border-t border-white/60 px-4 py-3 text-center text-sm font-bold text-dc-teal-deep hover:bg-white/50">
         View all
     </a>
 </div>

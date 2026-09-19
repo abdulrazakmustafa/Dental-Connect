@@ -330,22 +330,10 @@ class extends Component
                     @php
                         $quickActions = [
                             [
-                                'label' => 'My Clinic',
-                                'subtitle' => 'Details, services & dentists',
-                                'href' => $this->activeClinicPatient ? route('clinics.show', $this->activeClinicPatient->clinic) : route('clinics.index'),
-                                'icon' => '<path d="M3.75 21h16.5M5.25 3h13.5v18M9 7h1.5M13.5 7H15M9 11h1.5M13.5 11H15M10 21v-4h4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-                            ],
-                            [
                                 'label' => 'Appointments',
                                 'subtitle' => 'Upcoming & history',
                                 'href' => route('patient.appointments.index'),
                                 'icon' => '<rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16M9 3v3M15 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
-                            ],
-                            [
-                                'label' => 'Inbox',
-                                'subtitle' => 'Messages & alerts',
-                                'href' => route('patient.notifications.index'),
-                                'icon' => '<rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 7l7.5 6 7.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
                             ],
                             [
                                 'label' => 'Support',
