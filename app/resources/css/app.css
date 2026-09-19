@@ -170,3 +170,18 @@
         @apply bg-white text-dc-text-secondary border border-dc-border;
     }
 }
+
+/* Global search: staggered result rows + indeterminate loading bar */
+@keyframes dc-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes dc-search-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(300%); }
+}
+.dc-rise { animation: dc-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.dc-search-bar { animation: dc-search-slide 0.9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+    .dc-rise, .dc-search-bar { animation: none; }
+}

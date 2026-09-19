@@ -61,6 +61,7 @@
         activeRef: '{{ $pageRef }}',
         circleX: 0,
         moreX: 0,
+        ready: false,
         moveCircleTo(ref) {
             // Sets the target value only — both the circle's transform and the bar's notch
             // are bound to this same circleX and each carry an identical CSS transition
@@ -111,7 +112,13 @@
         },
     }"
     x-init="
-        $nextTick(() => { moveCircleTo(pageRef); moveMoreAnchor(); });
+        $nextTick(() => {
+            moveCircleTo(pageRef); moveMoreAnchor();
+            // Place the circle with transitions OFF, then enable them two frames later — otherwise it
+            // glides in from x=0 on every page render, so the nav looks like it 'reacts' to any
+            // same-page navigation (e.g. switching Inbox filters) instead of staying still.
+            requestAnimationFrame(() => requestAnimationFrame(() => ready = true));
+        });
         window.addEventListener('resize', () => { moveCircleTo(activeRef); moveMoreAnchor(); });
         lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
@@ -164,7 +171,7 @@
             {{-- Liquid active-tab indicator: a single solid circle (no colored ring/border) that
                  glides to whichever tab is selected, carrying that tab's icon up out of the bar
                  into the notch's open space. --}}
-            <div class="pointer-events-none absolute inset-x-0 -top-7 flex justify-start transition-transform duration-[260ms] ease-out will-change-transform" :style="`transform: translateX(${circleX}px)`">
+            <div class="pointer-events-none absolute inset-x-0 -top-7 flex justify-start will-change-transform" :class="ready ? 'transition-transform duration-[260ms] ease-out' : ''" :style="`transform: translateX(${circleX}px)`">
                 <div class="pointer-events-none -ml-7 flex h-14 w-14 items-center justify-center rounded-full bg-white text-dc-teal-deep shadow-[0_4px_20px_-4px_rgba(15,118,110,0.4)]">
                     @foreach ($navTabs as $tab)
                         <template x-if="activeRef === '{{ $tab['ref'] }}'">

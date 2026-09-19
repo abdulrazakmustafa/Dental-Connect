@@ -1,7 +1,7 @@
 @php
     $initials = collect(explode(' ', $user->name))->map(fn ($p) => strtoupper(substr($p, 0, 1)))->take(2)->implode('');
 @endphp
-<x-layouts.patient-app title="My Profile" active="profile">
+<x-layouts.patient-app title="My Profile" :back="route('patient.dashboard')" active="profile">
     <div x-data="{
             drawer: null,
             toast: null,

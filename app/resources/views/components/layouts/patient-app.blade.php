@@ -1,7 +1,12 @@
 @props(['title' => null, 'back' => null, 'active' => null])
 @php
     $user = auth()->user();
-    $initials = $user ? collect(explode(' ', $user->name))->map(fn ($p) => strtoupper(substr($p, 0, 1)))->take(2)->implode('') : '';
+
+    // "Book appointment" goes straight to the patient's own (active) clinic — they're already
+    // enrolled, so sending them to a clinic list first would just be an extra step.
+    $bookCp = $user?->clinicPatients()->with('clinic:id,public_id')->orderByDesc('id')->get();
+    $bookCp = $bookCp?->firstWhere('id', session('active_clinic_patient_id')) ?? $bookCp?->first();
+    $bookHref = $bookCp ? route('patient.appointments.book', $bookCp->clinic) : route('clinics.index');
 
     $navItems = [
         ['key' => 'home', 'route' => 'patient.dashboard', 'label' => 'Home'],
@@ -96,7 +101,7 @@
         </nav>
 
         <div class="p-4">
-            <a href="{{ route('clinics.index') }}" wire:navigate class="dc-btn-primary w-full">
+            <a href="{{ $bookHref }}" wire:navigate class="dc-btn-primary w-full">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
                 Book appointment
             </a>
@@ -148,11 +153,6 @@
                     @endif
                 </div>
 
-                <a href="{{ route('clinics.index') }}" wire:navigate aria-label="Search clinics"
-                   class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/70 text-dc-text-secondary shadow-sm ring-1 ring-dc-border transition hover:text-dc-teal-deep">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                </a>
-
                 {{-- Notification bell popover --}}
                 <div class="relative shrink-0" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                     <button @click="open = !open" type="button" aria-label="Notifications"
@@ -176,41 +176,14 @@
                     </div>
                 </div>
 
-                {{-- Avatar / account popover --}}
-                <div class="relative shrink-0" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
-                    <button @click="open = !open" type="button" aria-label="Account"
-                            class="flex h-10 w-10 items-center justify-center rounded-full bg-dc-mint text-sm font-bold text-dc-teal-deep ring-2 ring-white transition hover:ring-dc-teal/40">
-                        {{ $initials }}
-                    </button>
-
-                    <div x-show="open" x-transition.origin.top.right
-                         x-cloak
-                         class="absolute right-0 z-40 mt-5 w-64 overflow-hidden rounded-3xl border border-dc-border bg-white p-2 shadow-2xl shadow-dc-teal-deep/10">
-                        <div class="rounded-2xl px-3 py-2.5">
-                            <p class="truncate text-sm font-bold">{{ $user?->name }}</p>
-                            <p class="truncate text-xs text-dc-text-secondary">{{ $user?->email }}</p>
-                        </div>
-                        <div class="my-1 h-px bg-dc-border/70"></div>
-                        <a href="{{ route('patient.profile.index') }}" wire:navigate class="flex items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold text-dc-text transition hover:bg-white/60">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 19.2c1.4-2.7 3.8-4.2 6.5-4.2s5.1 1.5 6.5 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                            My profile
-                        </a>
-                        <a href="{{ route('patient.appointments.index') }}" wire:navigate class="flex items-center gap-2.5 rounded-2xl px-3 py-2.5 text-sm font-semibold text-dc-text transition hover:bg-white/60">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16" stroke="currentColor" stroke-width="1.8"/></svg>
-                            My appointments
-                        </a>
-                        <div class="my-1 h-px bg-dc-border/70"></div>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left text-sm font-semibold text-dc-danger transition hover:bg-dc-danger-bg">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 01-2-2V7a2 2 0 012-2h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                Sign out
-                            </button>
-                        </form>
-                    </div>
                 </div>
-            </div>
         </header>
+
+        @if (request()->routeIs('patient.dashboard', 'clinics.index', 'patient.appointments.index', 'patient.notifications.index', 'patient.profile.index'))
+            <div class="mx-auto max-w-6xl px-5 pt-3 md:px-8">
+                <livewire:patient.global-search />
+            </div>
+        @endif
 
         <main class="mx-auto max-w-6xl px-5 pb-28 pt-1 md:px-8 md:pb-12">
             {{ $slot }}

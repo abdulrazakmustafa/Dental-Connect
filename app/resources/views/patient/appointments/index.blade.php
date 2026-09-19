@@ -9,7 +9,7 @@
         'no_show' => 'bg-dc-danger-bg text-dc-danger',
     ];
 @endphp
-<x-layouts.patient-app title="My Appointments" active="appointments">
+<x-layouts.patient-app title="My Appointments" :back="route('patient.dashboard')" active="appointments">
     <div class="flex gap-2 overflow-x-auto pb-1">
         @foreach (['upcoming' => 'Upcoming', 'completed' => 'Completed', 'cancelled' => 'Cancelled'] as $value => $label)
             <a href="{{ route('patient.appointments.index', ['tab' => $value]) }}" wire:navigate

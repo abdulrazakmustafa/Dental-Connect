@@ -1,7 +1,7 @@
 @php
     $grouped = $notifications->groupBy(fn ($n) => $n->created_at->isToday() ? 'Today' : ($n->created_at->isYesterday() ? 'Yesterday' : $n->created_at->format('j M Y')));
 @endphp
-<x-layouts.patient-app title="Inbox" active="messages">
+<x-layouts.patient-app title="Inbox" :back="route('patient.dashboard')" active="messages">
     <div class="flex gap-2 overflow-x-auto pb-1">
         @foreach (['all' => 'All', 'clinic' => 'Clinic', 'system' => 'System'] as $value => $label)
             <a href="{{ route('patient.notifications.index', ['filter' => $value]) }}" wire:navigate

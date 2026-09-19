@@ -13,14 +13,11 @@ new
 class extends Component
 {
     public ?int $activeClinicPatientId = null;
-    public int $calendarMonth;
-    public int $calendarYear;
+    public int $weekOffset = 0;
 
     public function mount(): void
     {
         $this->activeClinicPatientId = session('active_clinic_patient_id');
-        $this->calendarMonth = (int) now()->format('n');
-        $this->calendarYear = (int) now()->format('Y');
     }
 
     public function getClinicPatientsProperty()
@@ -83,7 +80,7 @@ class extends Component
 
     public function getWeekStripProperty()
     {
-        $start = now()->startOfWeek(\Carbon\Carbon::MONDAY);
+        $start = now()->startOfWeek(\Carbon\Carbon::MONDAY)->addWeeks($this->weekOffset);
         $end = $start->copy()->addDays(6);
 
         $user = auth()->user();
@@ -118,37 +115,19 @@ class extends Component
             ->get();
     }
 
-    public function getCalendarAppointmentsProperty()
+    public function prevWeek(): void
     {
-        $user = auth()->user();
-        $activeClinicPatient = $this->activeClinicPatient;
-
-        return Appointment::whereHas('clinicPatient', fn ($q) => $q->where('user_id', $user->id))
-            ->when($activeClinicPatient, fn ($q) => $q->where('clinic_patient_id', $activeClinicPatient->id))
-            ->whereIn('status', [Appointment::STATUS_REQUESTED, Appointment::STATUS_CONFIRMED, Appointment::STATUS_RESCHEDULE_PROPOSED])
-            ->whereYear('preferred_date', $this->calendarYear)
-            ->whereMonth('preferred_date', $this->calendarMonth)
-            ->orderBy('preferred_date')
-            ->get(['id', 'public_id', 'preferred_date', 'preferred_time'])
-            ->keyBy(fn ($a) => $a->preferred_date->format('Y-m-d'));
+        $this->weekOffset--;
     }
 
-    public function calendarPrevMonth(): void
+    public function nextWeek(): void
     {
-        $this->calendarMonth--;
-        if ($this->calendarMonth < 1) {
-            $this->calendarMonth = 12;
-            $this->calendarYear--;
-        }
+        $this->weekOffset++;
     }
 
-    public function calendarNextMonth(): void
+    public function thisWeek(): void
     {
-        $this->calendarMonth++;
-        if ($this->calendarMonth > 12) {
-            $this->calendarMonth = 1;
-            $this->calendarYear++;
-        }
+        $this->weekOffset = 0;
     }
 
     public function selectClinic(int $clinicPatientId): void
@@ -268,6 +247,12 @@ class extends Component
                     @endif
                 </div>
 
+                @php
+                    $weekDays = $this->weekStrip;
+                    $weekLabel = \Carbon\Carbon::parse($weekDays->first()['iso'])->format('j M').' – '.\Carbon\Carbon::parse($weekDays->last()['iso'])->format('j M Y');
+                    $heroClinic = $this->nextAppointment?->clinic ?? $this->activeClinicPatient?->clinic;
+                @endphp
+
                 @if ($this->nextAppointment)
                     <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-white/80">{{ $this->nextAppointment->dentist?->specialties->first()?->name ?? 'General Dentistry' }}</p>
                     <h2 class="mt-1 text-xl font-extrabold md:text-2xl">{{ $this->nextAppointment->dentist?->full_name ?? $this->nextAppointment->clinic->name }}</h2>
@@ -277,11 +262,32 @@ class extends Component
                             &middot; TZS {{ number_format($this->nextAppointmentPrice) }}
                         @endif
                     </p>
+                @else
+                    <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-white/80">No upcoming appointments</p>
+                    <h2 class="mt-1 text-xl font-extrabold md:text-2xl">Book your next visit</h2>
+                    <p class="mt-1 text-sm text-white/90">
+                        @if ($heroClinic)
+                            Request an appointment with {{ $heroClinic->name }} in a few taps.
+                        @else
+                            Find a verified clinic and request an appointment in minutes.
+                        @endif
+                    </p>
+                @endif
 
-                    {{-- Availability strip: this week, appointment day highlighted solid white --}}
-                    <div class="mt-4 flex items-center justify-between rounded-2xl bg-white/10 px-3 py-3">
-                        @foreach ($this->weekStrip as $day)
-                            <div class="flex flex-col items-center gap-1.5">
+                {{-- Availability strip: browse week by week; days with a visit are filled solid white --}}
+                <div class="mt-4 rounded-2xl bg-white/10 px-3 pb-3 pt-2.5">
+                    <div class="mb-2 flex items-center justify-between text-xs font-semibold text-white/85">
+                        <button type="button" wire:click="prevWeek" aria-label="Previous week" class="flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-white/20">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" wire:click="thisWeek" class="transition hover:text-white" title="Back to this week">{{ $weekLabel }}</button>
+                        <button type="button" wire:click="nextWeek" aria-label="Next week" class="flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-white/20">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        @foreach ($weekDays as $day)
+                            <div class="flex flex-col items-center gap-1.5" wire:key="day-{{ $day['iso'] }}">
                                 <span class="text-[10px] font-semibold uppercase text-white/70">{{ $day['dayName'] }}</span>
                                 @if ($day['appointment'])
                                     <a href="{{ route('patient.appointments.show', $day['appointment']) }}" wire:navigate
@@ -296,86 +302,19 @@ class extends Component
                             </div>
                         @endforeach
                     </div>
+                </div>
 
+                @if ($this->nextAppointment)
                     <div class="mt-4 flex items-center gap-3 text-xs text-white/80">
                         <span x-show="label" x-cloak x-text="label" class="rounded-full bg-white/20 px-2.5 py-1 font-bold text-white"></span>
                         <span>{{ $this->nextAppointment->preferred_date->format('d M Y') }}@if($this->nextAppointment->preferred_time) &middot; {{ $this->nextAppointment->formattedTime() }} @endif</span>
                     </div>
                     <a href="{{ route('patient.appointments.show', $this->nextAppointment) }}" wire:navigate class="dc-btn-white mt-4 inline-flex">View appointment</a>
+                @elseif ($heroClinic)
+                    <a href="{{ route('patient.appointments.book', $heroClinic) }}" wire:navigate class="dc-btn-white mt-4 inline-flex">Book appointment</a>
                 @else
-                    <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-white/80">No upcoming appointments</p>
-                    <h2 class="mt-1 text-xl font-extrabold md:text-2xl">Book your next visit</h2>
-                    <p class="mt-1 text-sm text-white/90">Find a verified clinic and request an appointment in minutes.</p>
-
-                    <div class="mt-4 flex items-center justify-between rounded-2xl bg-white/10 px-3 py-3">
-                        @foreach ($this->weekStrip as $day)
-                            <div class="flex flex-col items-center gap-1.5">
-                                <span class="text-[10px] font-semibold uppercase text-white/70">{{ $day['dayName'] }}</span>
-                                <span class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white/80 {{ $day['isToday'] ? 'ring-1 ring-white/60' : '' }}">
-                                    {{ $day['dayNum'] }}
-                                </span>
-                            </div>
-                        @endforeach
-                    </div>
-
                     <a href="{{ route('clinics.index') }}" wire:navigate class="dc-btn-white mt-4 inline-flex">Find a clinic</a>
                 @endif
-            </div>
-
-            {{-- Full month calendar: collapsed by default (the hero's week strip already covers the
-                 common case), same "reveal a fuller picker" pattern as the booking/reschedule flow. --}}
-            @php
-                $calStart = \Carbon\Carbon::createFromDate($calendarYear, $calendarMonth, 1);
-                $calDaysInMonth = $calStart->daysInMonth;
-                $calStartOffset = $calStart->dayOfWeekIso - 1;
-                $calTodayIso = now()->format('Y-m-d');
-            @endphp
-            <div x-data="{ showFullCalendar: false }">
-                <button type="button" @click="showFullCalendar = !showFullCalendar" class="flex items-center gap-1 text-xs font-bold text-dc-teal-deep">
-                    <span x-text="showFullCalendar ? 'Hide full calendar' : 'View full calendar'"></span>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="transition-transform" :class="showFullCalendar ? 'rotate-180' : ''"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-
-                <div x-show="showFullCalendar" x-collapse x-cloak class="dc-card mt-3 p-5">
-                    <div class="flex items-center justify-between">
-                        <button wire:click="calendarPrevMonth" type="button" class="flex h-7 w-7 items-center justify-center rounded-full text-dc-text-secondary transition hover:bg-dc-mint-light" aria-label="Previous month">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <p class="text-sm font-bold">{{ $calStart->format('F Y') }}</p>
-                        <button wire:click="calendarNextMonth" type="button" class="flex h-7 w-7 items-center justify-center rounded-full text-dc-text-secondary transition hover:bg-dc-mint-light" aria-label="Next month">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                    </div>
-                    <div class="mt-3 grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-dc-text-secondary">
-                        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                    </div>
-                    <div class="mt-1 grid grid-cols-7 gap-1">
-                        @for ($i = 0; $i < $calStartOffset; $i++)
-                            <span></span>
-                        @endfor
-                        @for ($d = 1; $d <= $calDaysInMonth; $d++)
-                            @php
-                                $iso = $calStart->copy()->day($d)->format('Y-m-d');
-                                $appt = $this->calendarAppointments->get($iso);
-                                $isToday = $iso === $calTodayIso;
-                            @endphp
-                            @if ($appt)
-                                <a href="{{ route('patient.appointments.show', $appt) }}" wire:navigate
-                                   class="flex aspect-square items-center justify-center rounded-full bg-dc-teal text-sm font-bold text-white shadow-sm shadow-dc-teal/40 transition hover:bg-dc-teal-deep {{ $isToday ? 'ring-2 ring-offset-2 ring-dc-teal-deep' : '' }}"
-                                   title="{{ $appt->formattedTime() ?? 'Appointment' }}">
-                                    {{ $d }}
-                                </a>
-                            @else
-                                <span class="flex aspect-square items-center justify-center rounded-full text-sm {{ $isToday ? 'font-extrabold text-dc-teal-deep ring-2 ring-dc-teal' : 'text-dc-text' }}">{{ $d }}</span>
-                            @endif
-                        @endfor
-                    </div>
-                    @if ($this->calendarAppointments->isNotEmpty())
-                        <p class="mt-3 flex items-center gap-1.5 text-xs text-dc-text-secondary">
-                            <span class="h-2.5 w-2.5 rounded-full bg-dc-teal"></span> Days with a scheduled visit
-                        </p>
-                    @endif
-                </div>
             </div>
 
             {{-- Quick actions, styled after the reference's tile cards: icon chip top-left,
@@ -391,33 +330,33 @@ class extends Component
                     @php
                         $quickActions = [
                             [
-                                'label' => 'Find Clinic',
-                                'subtitle' => 'Browse verified clinics',
-                                'route' => 'clinics.index',
-                                'icon' => '<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+                                'label' => 'My Clinic',
+                                'subtitle' => 'Details, services & dentists',
+                                'href' => $this->activeClinicPatient ? route('clinics.show', $this->activeClinicPatient->clinic) : route('clinics.index'),
+                                'icon' => '<path d="M3.75 21h16.5M5.25 3h13.5v18M9 7h1.5M13.5 7H15M9 11h1.5M13.5 11H15M10 21v-4h4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
                             ],
                             [
                                 'label' => 'Appointments',
                                 'subtitle' => 'Upcoming & history',
-                                'route' => 'patient.appointments.index',
+                                'href' => route('patient.appointments.index'),
                                 'icon' => '<rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16M9 3v3M15 3v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
                             ],
                             [
                                 'label' => 'Inbox',
                                 'subtitle' => 'Messages & alerts',
-                                'route' => 'patient.notifications.index',
+                                'href' => route('patient.notifications.index'),
                                 'icon' => '<rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 7l7.5 6 7.5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
                             ],
                             [
                                 'label' => 'Support',
                                 'subtitle' => 'Get help fast',
-                                'route' => 'contact',
+                                'href' => route('contact'),
                                 'icon' => '<circle cx="12" cy="12" r="8.25" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.3a2.5 2.5 0 014.9.7c0 1.7-2.4 1.9-2.4 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.6" r="0.9" fill="currentColor"/>',
                             ],
                         ];
                     @endphp
                     @foreach ($quickActions as $action)
-                        <a href="{{ route($action['route']) }}" wire:navigate
+                        <a href="{{ $action['href'] }}" wire:navigate
                            class="dc-card relative flex flex-col gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-md">
                             <div class="flex items-start justify-between">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-full bg-dc-mint-light text-dc-teal-deep">

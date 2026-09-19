@@ -1,7 +1,7 @@
 @php
     $title = $isChoosingFirstClinic ? 'Choose your clinic' : 'Find Dental Clinics';
 @endphp
-<x-layouts.patient-app :title="$title" active="clinics">
+<x-layouts.patient-app :title="$title" :back="route('patient.dashboard')" active="clinics">
     @if ($isChoosingFirstClinic)
         <div class="dc-hero">
             <div class="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10"></div>
@@ -11,15 +11,8 @@
         </div>
     @endif
 
-    <form method="GET" class="mt-4">
-        <div class="flex items-center gap-2 rounded-full border border-dc-border bg-white px-4 py-3 shadow-sm">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="shrink-0 text-dc-text-secondary"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="{{ $isChoosingFirstClinic ? 'Search clinic, service or area' : 'Search clinic, service or area' }}" class="flex-1 border-0 bg-transparent text-sm focus:outline-none focus:ring-0">
-        </div>
-    </form>
-
     @unless ($isChoosingFirstClinic)
-        <div class="mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div class="mt-4 flex gap-2 overflow-x-auto pb-1">
             <a href="{{ route('clinics.index') }}" class="dc-pill-tab shrink-0 {{ ! request('service') && ! request('specialty') ? 'dc-pill-tab-active' : 'dc-pill-tab-inactive' }}">Near me</a>
             @foreach ($services->take(2) as $service)
                 <a href="{{ route('clinics.index', ['service' => $service->id]) }}" class="dc-pill-tab shrink-0 {{ request('service') == $service->id ? 'dc-pill-tab-active' : 'dc-pill-tab-inactive' }}">{{ $service->name }}</a>
